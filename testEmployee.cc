@@ -15,13 +15,13 @@
 #include "AddCommissionedEmployee.h"
 #include "CommissionedClassification.h"
 #include "BiweeklySchedule.h"
+#include "DeleteEmployeeTransaction.h"
 
 using namespace std;
 
-PayrollDatabase gPayrollDatabase;
-
 void testAddSalariedEmployee()
 {
+    cerr << "test add salaried employee" << endl;
     int empId = 1;
     Transaction *addSalariedEmployee = new AddSalariedEmployee(
             empId, string("Alice"), string("Home"), 1000.32); 
@@ -48,6 +48,7 @@ void testAddSalariedEmployee()
 
 void testAddHourlyEmployee()
 {
+    cerr << "test add hourly employee" << endl;
     int empId = 2;
     Transaction *addHourlyEmployee = new AddHourlyEmployee(
             empId, string("Bob"), string("Home"), 80.0); 
@@ -74,6 +75,7 @@ void testAddHourlyEmployee()
 
 void testAddCommissionedEmployee()
 {
+    cerr << "test add commissioned employee" << endl;
     int empId = 3;
     Transaction *addCommissionedEmployee = new AddCommissionedEmployee(
             empId, string("Carl"), string("Home"), 800.0, 40.0); 
@@ -99,10 +101,30 @@ void testAddCommissionedEmployee()
     assert(hm);
 }
 
+void testDeleteEmployee()
+{
+    cerr << "Test delete employee" << endl;
+    int empId = 4;
+    AddEmployeeTransaction *add = new AddCommissionedEmployee(
+            empId, string("Dell"), string("CA"), 800, 0.2);     
+    add->execute();
+    
+    Employee *e = gPayrollDatabase.getEmployee(empId);
+    assert(e);
+
+    DeleteEmployeeTransaction *del = new DeleteEmployeeTransaction(empId);
+    del->execute();
+
+    Employee *e1 = gPayrollDatabase.getEmployee(empId);
+    assert(!e1);
+}
+
+
 int main()
 {
     testAddSalariedEmployee();
     testAddHourlyEmployee();
     testAddCommissionedEmployee();
+    testDeleteEmployee();
     return 0;
 }
