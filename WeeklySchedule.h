@@ -1,5 +1,5 @@
-#ifndef _WEEKLY_SCHEDULE_H_
-#define _WEEKLY_SCHEDULE_H_
+#ifndef _WEEKLYSCHEDULE_H_
+#define _WEEKLYSCHEDULE_H_
 
 #include "PaymentSchedule.h"
 

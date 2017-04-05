@@ -1,5 +1,5 @@
-#ifndef _HOURLY_CLASSIFICATION_H_
-#define _HOURLY_CLASSIFICATION_H_
+#ifndef _HOURLYCLASSIFICATION_H_
+#define _HOURLYCLASSIFICATION_H_
 
 #include "PaymentClassification.h"
 

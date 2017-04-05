@@ -1,5 +1,5 @@
 #ifndef _ADDHOURLYEMPLOYEE_H_
-#define _ADDhOURLYeMPLOYEE_H_
+#define _ADDHOURLYEMPLOYEE_H_
 
 #include "AddEmployeeTransaction.h"
 
