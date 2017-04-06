@@ -33,3 +33,4 @@ TimeCard *HourlyClassification::getTimeCard(Date date)
         return *it;
     return nullptr;
 }
+

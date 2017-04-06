@@ -1,0 +1,5 @@
+language: cpp
+complier:
+    - gcc
+    - clang
+script: make
