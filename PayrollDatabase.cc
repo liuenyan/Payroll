@@ -1,5 +1,7 @@
 #include "PayrollDatabase.h"
 
+using namespace std;
+
 PayrollDatabase gPayrollDatabase;
 
 PayrollDatabase::~PayrollDatabase() 
@@ -19,5 +21,10 @@ void PayrollDatabase::addEmployee(int empId, Employee *e)
 
 void PayrollDatabase::deleteEmployee(int empId)
 {
-    itsEmployees.erase(empId);
+    map<int, Employee *>::iterator it = itsEmployees.find(empId);
+    
+    if(it != itsEmployees.end()) {
+        delete it->second;
+        itsEmployees.erase(it);
+    }
 }

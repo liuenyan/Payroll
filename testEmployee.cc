@@ -119,7 +119,6 @@ void testDeleteEmployee()
     assert(!e1);
 }
 
-
 int main()
 {
     testAddSalariedEmployee();
