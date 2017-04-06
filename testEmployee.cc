@@ -16,6 +16,8 @@
 #include "CommissionedClassification.h"
 #include "BiweeklySchedule.h"
 #include "DeleteEmployeeTransaction.h"
+#include "TimeCardTransaction.h"
+#include "Date.h"
 
 using namespace std;
 
@@ -119,11 +121,39 @@ void testDeleteEmployee()
     assert(!e1);
 }
 
+void testAddTimeCard()
+{
+    cerr << "Test AddTimeCard" << endl;
+    int empId = 5;
+    AddEmployeeTransaction *add = new AddHourlyEmployee(
+            empId, string("John"), string("CA"), 10.0);
+    add->execute();
+    delete add;
+    
+    Date date(2017, 4, 6);
+    TimeCardTransaction *tct = new TimeCardTransaction(date, 4, empId);
+    tct->execute();
+    delete tct;
+
+    Employee *e = gPayrollDatabase.getEmployee(empId); 
+    assert(e);
+
+    PaymentClassification *pc = e->getClassification();
+    assert(pc);
+    HourlyClassification *hc = dynamic_cast<HourlyClassification *>(pc);
+    assert(hc);
+
+    TimeCard *tc = hc->getTimeCard(date);
+    assert(tc);
+    assert(tc->getHours() == 4);
+}
+
 int main()
 {
     testAddSalariedEmployee();
     testAddHourlyEmployee();
     testAddCommissionedEmployee();
     testDeleteEmployee();
+    testAddTimeCard();
     return 0;
 }
