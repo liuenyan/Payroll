@@ -18,12 +18,13 @@
 #include "DeleteEmployeeTransaction.h"
 #include "TimeCardTransaction.h"
 #include "Date.h"
+#include "SalesReceiptTransaction.h"
 
 using namespace std;
 
 void testAddSalariedEmployee()
 {
-    cerr << "test add salaried employee" << endl;
+    cerr << "Test add salaried employee" << endl;
     int empId = 1;
     Transaction *addSalariedEmployee = new AddSalariedEmployee(
             empId, string("Alice"), string("Home"), 1000.32); 
@@ -50,7 +51,7 @@ void testAddSalariedEmployee()
 
 void testAddHourlyEmployee()
 {
-    cerr << "test add hourly employee" << endl;
+    cerr << "Test add hourly employee" << endl;
     int empId = 2;
     Transaction *addHourlyEmployee = new AddHourlyEmployee(
             empId, string("Bob"), string("Home"), 80.0); 
@@ -77,7 +78,7 @@ void testAddHourlyEmployee()
 
 void testAddCommissionedEmployee()
 {
-    cerr << "test add commissioned employee" << endl;
+    cerr << "Test add commissioned employee" << endl;
     int empId = 3;
     Transaction *addCommissionedEmployee = new AddCommissionedEmployee(
             empId, string("Carl"), string("Home"), 800.0, 40.0); 
@@ -148,6 +149,33 @@ void testAddTimeCard()
     assert(tc->getHours() == 4);
 }
 
+void testAddSalesReceipt()
+{
+    cerr << "Test AddSalesReceipt" << endl;
+    int empId = 6;
+    AddEmployeeTransaction *add = new AddHourlyEmployee(
+            empId, string("Jack"), string("CA"), 10.0);
+    add->execute();
+    delete add;
+    
+    Date date(2017, 4, 6);
+    SalesReceiptTransaction *srt = new SalesReceiptTransaction(date, 15, empId);
+    srt->execute();
+    delete srt;
+    
+    Employee *e = gPayrollDatabase.getEmployee(empId); 
+    assert(e);
+
+    PaymentClassification *pc = e->getClassification();
+    assert(pc);
+    CommissionedClassification *cc = dynamic_cast<CommissionedClassification *>(pc);
+    assert(cc);
+
+    SalesReceipt *sr = cc->getSalesReceipt(date);
+    assert(sr);
+    assert(sr->getAmount() == 15);
+}
+
 int main()
 {
     testAddSalariedEmployee();
@@ -155,5 +183,6 @@ int main()
     testAddCommissionedEmployee();
     testDeleteEmployee();
     testAddTimeCard();
+    testAddSalesReceipt();
     return 0;
 }
