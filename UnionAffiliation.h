@@ -1,8 +1,10 @@
 #ifndef _UNIONAFFILIATION_H_
 #define _UNIONAFFILIATION_H_ 
 
+#include <vector>
 #include "Affiliation.h"
 #include "Date.h"
+#include "ServiceCharge.h"
 
 class UnionAffiliation : public Affiliation
 {

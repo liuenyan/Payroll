@@ -155,8 +155,8 @@ void testAddSalesReceipt()
 {
     cerr << "Test AddSalesReceipt" << endl;
     int empId = 6;
-    AddEmployeeTransaction *add = new AddHourlyEmployee(
-            empId, string("Jack"), string("CA"), 10.0);
+    AddEmployeeTransaction *add = new AddCommissionedEmployee(
+            empId, string("Jack"), string("CA"), 800.0, 0.2);
     add->execute();
     delete add;
     
