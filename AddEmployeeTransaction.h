@@ -10,7 +10,10 @@
 class AddEmployeeTransaction : public Transaction 
 {
     public:
-        AddEmployeeTransaction(int empId, std::string name, std::string address);
+        AddEmployeeTransaction(
+                int empId, 
+                const std::string &name, 
+                const std::string &address);
         virtual ~AddEmployeeTransaction();
         virtual PaymentClassification *getPaymentClassification() = 0;
         virtual PaymentSchedule *getPaymentSchedule() = 0;

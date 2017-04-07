@@ -7,8 +7,8 @@ using namespace std;
 
 AddCommissionedEmployee::AddCommissionedEmployee(
         int empId, 
-        string name, 
-        string address, 
+        const string &name, 
+        const string &address, 
         double salary, 
         double commissionRate)
     : AddEmployeeTransaction(empId, name, address)

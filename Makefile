@@ -9,7 +9,8 @@ testEmployee: testEmployee.o Employee.o PayrollDatabase.o \
 	AddCommissionedEmployee.o DeleteEmployeeTransaction.o \
 	TimeCardTransaction.o TimeCard.o Date.o HourlyClassification.o \
 	SalesReceiptTransaction.o SalesReceipt.o CommissionedClassification.o \
-	UnionAffiliation.o ServiceChargeTransaction.o
+	UnionAffiliation.o ServiceChargeTransaction.o \
+	ChangeEmployeeTransaction.o ChangeNameTransaction.o ChangeAddressTransaction.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 %.o:%.cc

@@ -21,6 +21,8 @@
 #include "SalesReceiptTransaction.h"
 #include "UnionAffiliation.h"
 #include "ServiceChargeTransaction.h"
+#include "ChangeNameTransaction.h"
+#include "ChangeAddressTransaction.h"
 
 using namespace std;
 
@@ -211,6 +213,42 @@ void testAddServiceCharge()
     assert(sc->getAmount() == 12.95);
 }
 
+void testChangeEmployeeName()
+{
+
+    cerr << "Test change employee name" << endl;
+    int empId = 8;
+    
+    AddSalariedEmployee a = 
+        AddSalariedEmployee(empId, string("Mark"), string("Home"), 1000.32); 
+    a.execute();
+    
+    string name = string("Joe");
+    ChangeNameTransaction cnt = ChangeNameTransaction(empId, name);
+    cnt.execute();
+    
+    Employee *e = gPayrollDatabase.getEmployee(empId);
+    assert(e->getName() == name); 
+}
+
+void testChangeEmployeeAddress()
+{
+
+    cerr << "Test change employee address" << endl;
+    int empId = 9;
+    
+    AddSalariedEmployee a = 
+        AddSalariedEmployee(empId, string("Marc"), string("Home"), 1000); 
+    a.execute();
+    
+    string address = string("Joel");
+    ChangeAddressTransaction cat = ChangeAddressTransaction(empId, address);
+    cat.execute();
+    
+    Employee *e = gPayrollDatabase.getEmployee(empId);
+    assert(e->getAddress() == address);
+}
+
 int main()
 {
     testAddSalariedEmployee();
@@ -220,5 +258,7 @@ int main()
     testAddTimeCard();
     testAddSalesReceipt();
     testAddServiceCharge();
+    testChangeEmployeeName();
+    testChangeEmployeeAddress();
     return 0;
 }

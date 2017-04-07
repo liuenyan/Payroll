@@ -6,7 +6,11 @@
 class AddSalariedEmployee : public AddEmployeeTransaction
 {
     public:
-        AddSalariedEmployee(int empId, std::string name, std::string address, double salary);
+        AddSalariedEmployee(
+                int empId, 
+                const std::string &name, 
+                const std::string &address, 
+                double salary);
         virtual ~AddSalariedEmployee();
         PaymentClassification *getPaymentClassification() override;
         PaymentSchedule *getPaymentSchedule() override;

@@ -6,8 +6,12 @@
 using namespace std;
 
 AddHourlyEmployee::AddHourlyEmployee(
-        int empId, string name, string address, double hourlyRate)
-    : AddEmployeeTransaction(empId, name, address), itsHourlyRate(hourlyRate)
+        int empId, 
+        const string &name, 
+        const string &address, 
+        double hourlyRate)
+    : AddEmployeeTransaction(empId, name, address)
+    , itsHourlyRate(hourlyRate)
 {
 
 }

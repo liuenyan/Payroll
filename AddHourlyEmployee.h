@@ -8,8 +8,8 @@ class AddHourlyEmployee : public AddEmployeeTransaction
     public:
         AddHourlyEmployee(
                 int empId, 
-                std::string name, 
-                std::string address, 
+                const std::string &name, 
+                const std::string &address, 
                 double hourlyRate);
 
         virtual ~AddHourlyEmployee();

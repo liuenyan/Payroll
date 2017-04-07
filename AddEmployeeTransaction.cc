@@ -7,7 +7,7 @@ using namespace std;
 extern PayrollDatabase gPayrollDatabase;
 
 AddEmployeeTransaction::AddEmployeeTransaction(
-        int empId, string name, string address)
+        int empId, const string &name, const string &address)
     : itsEmpId(empId), itsName(name), itsAddress(address)
 {
 

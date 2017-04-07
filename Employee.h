@@ -10,8 +10,10 @@
 class Employee 
 {
     public:
-        Employee(int empId, std::string name, std::string address);
+        Employee(int empId, const std::string &name, const std::string &address);
         ~Employee();
+        void setName(std::string &name);
+        void setAddress(std::string &address);
         void setClassification(PaymentClassification *pc);
         void setSchedule(PaymentSchedule *ps);
         void setMethod(PaymentMethod *pm);

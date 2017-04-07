@@ -4,8 +4,12 @@
 #include "HoldMethod.h"
 
 AddSalariedEmployee::AddSalariedEmployee(
-        int empId, std::string name, std::string address, double salary)
-    : AddEmployeeTransaction(empId, name, address), itsSalary(salary)
+        int empId, 
+        const std::string &name, 
+        const std::string &address, 
+        double salary)
+    : AddEmployeeTransaction(empId, name, address)
+    , itsSalary(salary)
 {
 
 }

@@ -7,9 +7,9 @@ class AddCommissionedEmployee : public AddEmployeeTransaction
 {
     public:
         AddCommissionedEmployee(
-                int empId, 
-                std::string name, 
-                std::string address, 
+                int empId,
+                const std::string &name, 
+                const std::string &address, 
                 double salary, 
                 double commissionRate);
 
