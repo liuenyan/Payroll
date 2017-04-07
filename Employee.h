@@ -5,6 +5,7 @@
 #include "PaymentClassification.h"
 #include "PaymentSchedule.h"
 #include "PaymentMethod.h"
+#include "Affiliation.h"
 
 class Employee 
 {
@@ -14,11 +15,13 @@ class Employee
         void setClassification(PaymentClassification *pc);
         void setSchedule(PaymentSchedule *ps);
         void setMethod(PaymentMethod *pm);
+        void setAffiliation(Affiliation *af);
         const std::string &getName() const { return itsName; };
         const std::string &getAddress() const { return itsAddress; };
         PaymentClassification *getClassification() const { return itsClassification; };
         PaymentSchedule *getSchedule() const { return itsSchedule; };
         PaymentMethod *getMethod() const { return itsMethod; };
+        Affiliation *getAffiliation() const { return itsAffiliation; };
     private:
         int itsEmpId;
         std::string itsName;
@@ -26,6 +29,7 @@ class Employee
         PaymentClassification *itsClassification;
         PaymentSchedule *itsSchedule;
         PaymentMethod *itsMethod;
+        Affiliation *itsAffiliation;
 };
 
 #endif

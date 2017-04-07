@@ -5,4 +5,4 @@ os:
 complier:
     - gcc
     - clang
-script: make
+script: make && make test

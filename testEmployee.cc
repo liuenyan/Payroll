@@ -19,6 +19,8 @@
 #include "TimeCardTransaction.h"
 #include "Date.h"
 #include "SalesReceiptTransaction.h"
+#include "UnionAffiliation.h"
+#include "ServiceChargeTransaction.h"
 
 using namespace std;
 
@@ -176,6 +178,39 @@ void testAddSalesReceipt()
     assert(sr->getAmount() == 15);
 }
 
+void testAddServiceCharge()
+{
+    cerr << "Test AddServiceCharge" << endl;
+    int empId = 7;
+
+    AddEmployeeTransaction *add = new AddHourlyEmployee(
+            empId, string("James"), string("CA"), 10.0);
+    add->execute();
+    delete add;
+    
+    Employee *e = gPayrollDatabase.getEmployee(empId);
+    assert(e);
+
+    int memberId = 87;
+    UnionAffiliation *af = new UnionAffiliation(memberId, 12.5);
+    e->setAffiliation(af);
+
+    gPayrollDatabase.addUnionMember(memberId, e);
+
+    Date date(2017, 4, 7);
+    ServiceChargeTransaction *sct = 
+        new ServiceChargeTransaction(memberId, date, 12.95);
+    sct->execute();
+    delete sct;
+    
+    Employee *e1 = gPayrollDatabase.getUnionMember(memberId);
+    assert(e1 == e);
+    ServiceCharge *sc = af->getServiceCharge(date);    
+    assert(sc);
+
+    assert(sc->getAmount() == 12.95);
+}
+
 int main()
 {
     testAddSalariedEmployee();
@@ -184,5 +219,6 @@ int main()
     testDeleteEmployee();
     testAddTimeCard();
     testAddSalesReceipt();
+    testAddServiceCharge();
     return 0;
 }

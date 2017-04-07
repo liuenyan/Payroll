@@ -28,3 +28,16 @@ void PayrollDatabase::deleteEmployee(int empId)
         itsEmployees.erase(it);
     }
 }
+
+
+Employee *PayrollDatabase::getUnionMember(int memberId)
+{
+    return itsUnionMembers[memberId];
+}
+
+
+void PayrollDatabase::addUnionMember(int memberId, Employee *e)
+{
+    itsUnionMembers[memberId] = e;
+}
+

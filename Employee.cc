@@ -4,6 +4,7 @@ using namespace std;
 
 Employee::Employee(int empId, string name, string address)
     : itsEmpId(empId), itsName(name), itsAddress(address)
+    , itsAffiliation(nullptr)
 {
 
 }
@@ -28,3 +29,7 @@ void Employee::setMethod(PaymentMethod *pm)
     itsMethod = pm;
 }
 
+void Employee::setAffiliation(Affiliation *af)
+{
+    itsAffiliation = af;
+}
