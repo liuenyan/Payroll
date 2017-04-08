@@ -23,6 +23,9 @@
 #include "ServiceChargeTransaction.h"
 #include "ChangeNameTransaction.h"
 #include "ChangeAddressTransaction.h"
+#include "ChangeHourlyTransaction.h"
+#include "ChangeSalariedTransaction.h"
+#include "ChangeCommissionedTransaction.h"
 
 using namespace std;
 
@@ -249,6 +252,77 @@ void testChangeEmployeeAddress()
     assert(e->getAddress() == address);
 }
 
+void testChangeHourlyTransaction()
+{
+    cerr << "Test change hourly transaction" << endl;
+    int empId = 10;
+     
+    AddSalariedEmployee a(empId, string("Bob"), string("Home"), 1000); 
+    a.execute();
+
+    ChangeHourlyTransaction cht(empId, 20.0);
+    cht.execute();
+
+    Employee *e = gPayrollDatabase.getEmployee(empId);
+    PaymentClassification *pc = e->getClassification();
+    assert(pc);
+    HourlyClassification *hc = dynamic_cast<HourlyClassification *>(pc);
+    assert(hc);
+    assert(hc->getHourlyRate() == 20.0);
+    PaymentSchedule *ps = e->getSchedule();
+    assert(ps);
+    WeeklySchedule *ws = dynamic_cast<WeeklySchedule *>(ps);
+    assert(ws);
+}
+
+void testChangeSalariedTransaction()
+{
+    cerr << "Test change salaried transaction" << endl;
+    int empId = 11;
+     
+    AddHourlyEmployee a(empId, string("Bob"), string("Home"), 20); 
+    a.execute();
+
+    ChangeSalariedTransaction cst(empId, 1000);
+    cst.execute();
+
+    Employee *e = gPayrollDatabase.getEmployee(empId);
+    PaymentClassification *pc = e->getClassification();
+    assert(pc);
+    SalariedClassification *sc = dynamic_cast<SalariedClassification *>(pc);
+    assert(sc);
+    assert(sc->getSalary() == 1000);
+    PaymentSchedule *ps = e->getSchedule();
+    assert(ps);
+    MonthlySchedule *ms = dynamic_cast<MonthlySchedule *>(ps);
+    assert(ms);
+}
+
+
+void testChangeCommissionedTransaction()
+{
+    cerr << "Test change commissioned transaction" << endl;
+    int empId = 12;
+     
+    AddHourlyEmployee a(empId, string("Bob"), string("Home"), 20); 
+    a.execute();
+
+    ChangeCommissionedTransaction cct(empId, 1000, 0.2);
+    cct.execute();
+
+    Employee *e = gPayrollDatabase.getEmployee(empId);
+    PaymentClassification *pc = e->getClassification();
+    assert(pc);
+    CommissionedClassification *cc = dynamic_cast<CommissionedClassification *>(pc);
+    assert(cc);
+    assert(cc->getSalary() == 1000);
+    assert(cc->getCommissionRate() == 0.2);
+    PaymentSchedule *ps = e->getSchedule();
+    assert(ps);
+    BiweeklySchedule *ms = dynamic_cast<BiweeklySchedule *>(ps);
+    assert(ms);
+}
+
 int main()
 {
     testAddSalariedEmployee();
@@ -260,5 +334,8 @@ int main()
     testAddServiceCharge();
     testChangeEmployeeName();
     testChangeEmployeeAddress();
+    testChangeHourlyTransaction();
+    testChangeSalariedTransaction();
+    testChangeCommissionedTransaction();
     return 0;
 }
