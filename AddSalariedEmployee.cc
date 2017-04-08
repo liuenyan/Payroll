@@ -29,8 +29,4 @@ PaymentSchedule *AddSalariedEmployee::getPaymentSchedule()
     return new MonthlySchedule();
 }
 
-PaymentMethod *AddSalariedEmployee::getPaymentMethod()
-{
-    return new HoldMethod();
-}
 

@@ -30,9 +30,3 @@ PaymentSchedule *AddHourlyEmployee::getPaymentSchedule()
 {
     return new WeeklySchedule();
 }
-
-PaymentMethod *AddHourlyEmployee::getPaymentMethod()
-{
-    return new HoldMethod();
-}
-

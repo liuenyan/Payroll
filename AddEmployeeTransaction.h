@@ -17,7 +17,6 @@ class AddEmployeeTransaction : public Transaction
         virtual ~AddEmployeeTransaction();
         virtual PaymentClassification *getPaymentClassification() = 0;
         virtual PaymentSchedule *getPaymentSchedule() = 0;
-        virtual PaymentMethod *getPaymentMethod() = 0;
         void execute() override;
     private:
         int itsEmpId;

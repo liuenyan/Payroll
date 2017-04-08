@@ -16,7 +16,6 @@ class AddCommissionedEmployee : public AddEmployeeTransaction
         virtual ~AddCommissionedEmployee();
         PaymentClassification *getPaymentClassification() override;
         PaymentSchedule *getPaymentSchedule() override;
-        PaymentMethod *getPaymentMethod() override;
     private:
         double itsSalary;
         double itsCommissionRate;

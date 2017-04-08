@@ -32,9 +32,3 @@ PaymentSchedule *AddCommissionedEmployee::getPaymentSchedule()
 {
     return new BiweeklySchedule();
 }
-
-PaymentMethod *AddCommissionedEmployee::getPaymentMethod()
-{
-    return new HoldMethod();
-}
-

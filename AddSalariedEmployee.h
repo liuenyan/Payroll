@@ -14,7 +14,6 @@ class AddSalariedEmployee : public AddEmployeeTransaction
         virtual ~AddSalariedEmployee();
         PaymentClassification *getPaymentClassification() override;
         PaymentSchedule *getPaymentSchedule() override;
-        PaymentMethod *getPaymentMethod() override;
     private:
         double itsSalary;
 };
