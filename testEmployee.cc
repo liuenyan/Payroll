@@ -26,6 +26,11 @@
 #include "ChangeHourlyTransaction.h"
 #include "ChangeSalariedTransaction.h"
 #include "ChangeCommissionedTransaction.h"
+#include "ChangeDirectMethodTransaction.h"
+#include "ChangeMailMethodTransaction.h"
+#include "ChangeHoldMethodTransaction.h"
+#include "MailMethod.h"
+#include "DirectMethod.h"
 
 using namespace std;
 
@@ -323,6 +328,42 @@ void testChangeCommissionedTransaction()
     assert(ms);
 }
 
+void testChangeMethodTransaction()
+{
+    cerr << "Test change method transaction" << endl;
+    int empId = 13;
+     
+    AddHourlyEmployee a(empId, string("Bob"), string("Home"), 20); 
+    a.execute();
+
+    ChangeDirectMethodTransaction cdmt(empId, string("Bank1"), string("b112233"));
+    cdmt.execute();
+    Employee *e = gPayrollDatabase.getEmployee(empId);
+    PaymentMethod *pm = e->getMethod();
+    assert(pm);
+    DirectMethod *dm = dynamic_cast<DirectMethod *>(pm);
+    assert(dm);
+    assert(dm->getBank() == string("Bank1"));
+    assert(dm->getAccount() == string("b112233"));
+
+    ChangeMailMethodTransaction cmmt(empId, string("Home1"));
+    cmmt.execute();
+    e = gPayrollDatabase.getEmployee(empId);
+    pm = e->getMethod();
+    assert(pm);
+    MailMethod *mm = dynamic_cast<MailMethod *>(pm);
+    assert(mm);
+    assert(mm->getAddress() == string("Home1"));
+
+    ChangeHoldMethodTransaction chmt(empId);
+    chmt.execute();
+    e = gPayrollDatabase.getEmployee(empId);
+    pm = e->getMethod();
+    assert(pm);
+    HoldMethod *hm = dynamic_cast<HoldMethod *>(pm);
+    assert(hm);
+}
+
 int main()
 {
     testAddSalariedEmployee();
@@ -337,5 +378,6 @@ int main()
     testChangeHourlyTransaction();
     testChangeSalariedTransaction();
     testChangeCommissionedTransaction();
+    testChangeMethodTransaction();
     return 0;
 }

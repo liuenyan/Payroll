@@ -12,7 +12,9 @@ testEmployee: testEmployee.o Employee.o PayrollDatabase.o \
 	UnionAffiliation.o ServiceChargeTransaction.o \
 	ChangeEmployeeTransaction.o ChangeNameTransaction.o ChangeAddressTransaction.o \
 	ChangeClassificationTransaction.o ChangeHourlyTransaction.o \
-	ChangeSalariedTransaction.o ChangeCommissionedTransaction.o
+	ChangeSalariedTransaction.o ChangeCommissionedTransaction.o \
+	ChangeMethodTransaction.o ChangeHoldMethodTransaction.o \
+	ChangeDirectMethodTransaction.o ChangeMailMethodTransaction.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 %.o:%.cc
