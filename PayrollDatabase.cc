@@ -41,3 +41,11 @@ void PayrollDatabase::addUnionMember(int memberId, Employee *e)
     itsUnionMembers[memberId] = e;
 }
 
+void PayrollDatabase::removeUnionMember(int memberId) 
+{
+    map<int, Employee *>::iterator it = itsUnionMembers.find(memberId);
+    if(it != itsUnionMembers.end()) {
+        itsUnionMembers.erase(it);
+    }
+}
+

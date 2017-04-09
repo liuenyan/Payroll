@@ -31,6 +31,9 @@
 #include "ChangeHoldMethodTransaction.h"
 #include "MailMethod.h"
 #include "DirectMethod.h"
+#include "ChangeMemberTransaction.h"
+#include "ChangeUnaffiliatedTransaction.h"
+#include "NoAffiliation.h"
 
 using namespace std;
 
@@ -364,6 +367,42 @@ void testChangeMethodTransaction()
     assert(hm);
 }
 
+void testChangeAffiliation()
+{
+    cerr << "Test change affiliation transaction" << endl;
+    int empId = 14;
+    int memberId = 7752;
+     
+    AddHourlyEmployee a(empId, string("Bill"), string("Home"), 15.25); 
+    a.execute();
+    ChangeMemberTransaction cmt(empId, memberId, 99.42);
+    cmt.execute();
+
+    Employee *e = gPayrollDatabase.getEmployee(empId);
+    assert(e);
+    Affiliation *af = e->getAffiliation();
+    assert(af);
+    UnionAffiliation *uaf = dynamic_cast<UnionAffiliation *>(af);
+    assert(uaf);
+    assert(uaf->getDues() == 99.42);
+
+    Employee *member = gPayrollDatabase.getUnionMember(memberId);
+    assert(member == e);
+
+    ChangeUnaffiliatedTransaction cut(empId);
+    cut.execute();
+
+    e = gPayrollDatabase.getEmployee(empId);
+    assert(e);
+    af = e->getAffiliation();
+    assert(af);
+    NoAffiliation *naf = dynamic_cast<NoAffiliation *>(af);
+    assert(naf);
+    
+    member = gPayrollDatabase.getUnionMember(memberId);
+    assert(member == nullptr);
+}
+
 int main()
 {
     testAddSalariedEmployee();
@@ -379,5 +418,6 @@ int main()
     testChangeSalariedTransaction();
     testChangeCommissionedTransaction();
     testChangeMethodTransaction();
+    testChangeAffiliation();
     return 0;
 }

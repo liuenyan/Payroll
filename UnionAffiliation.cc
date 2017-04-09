@@ -5,7 +5,7 @@
 using namespace std;
 
 UnionAffiliation::UnionAffiliation(int memberId, double dues) 
-    : Affiliation(memberId), itsDues(dues) 
+    : itsMemberId(memberId), itsDues(dues) 
 {
 
 }
