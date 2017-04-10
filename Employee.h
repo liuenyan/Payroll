@@ -6,7 +6,7 @@
 #include "PaymentSchedule.h"
 #include "PaymentMethod.h"
 #include "Affiliation.h"
-#include "PayCheck.h"
+#include "Paycheck.h"
 
 class Employee 
 {

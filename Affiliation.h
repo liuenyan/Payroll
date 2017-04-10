@@ -1,7 +1,7 @@
 #ifndef _AFFILIATION_H_
 #define _AFFILIATION_H_
 
-#include "PayCheck.h"
+#include "Paycheck.h"
 
 class Affiliation 
 {
