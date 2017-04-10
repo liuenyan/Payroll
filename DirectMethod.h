@@ -12,6 +12,7 @@ class DirectMethod : public PaymentMethod
         virtual ~DirectMethod(){};
         const std::string &getBank() const { return itsBank; };
         const std::string &getAccount() const { return itsAccount; };
+        void pay(Paycheck &pc) const override;
     private:
         std::string itsBank;
         std::string itsAccount;

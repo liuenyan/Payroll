@@ -10,6 +10,7 @@ class MailMethod : public PaymentMethod
         MailMethod(const std::string &address) : itsAddress(address) {};
         virtual ~MailMethod() {};
         const std::string &getAddress() const { return itsAddress; };
+        void pay(Paycheck &pc) const override;
     private:
         std::string itsAddress;
 };

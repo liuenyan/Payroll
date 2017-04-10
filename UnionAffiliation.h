@@ -11,6 +11,7 @@ class UnionAffiliation : public Affiliation
     public:
         UnionAffiliation(int memberId, double dues);
         virtual ~UnionAffiliation();
+        double calculateDeductions(Paycheck &pc) const override;
         int getMemberId() const { return itsMemberId; };
         double getDues() const { return itsDues; };
         void addServiceCharge(Date date, double charge);

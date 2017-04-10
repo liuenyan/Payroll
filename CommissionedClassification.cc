@@ -34,3 +34,7 @@ SalesReceipt *CommissionedClassification::getSalesReceipt(Date &date)
     return nullptr;
 }
 
+double CommissionedClassification::calculatePay(Paycheck &pc) const
+{
+    return 0.0;
+}

@@ -34,3 +34,8 @@ TimeCard *HourlyClassification::getTimeCard(Date date)
     return nullptr;
 }
 
+double HourlyClassification::calculatePay(Paycheck &pc) const
+{
+    return 0.0;
+}
+

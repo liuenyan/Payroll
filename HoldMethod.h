@@ -7,6 +7,7 @@ class HoldMethod : public PaymentMethod
 {
     public:
         virtual ~HoldMethod() {};
+        void pay(Paycheck &pc) const override;
 };
 
 #endif

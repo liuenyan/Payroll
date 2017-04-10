@@ -8,6 +8,7 @@ class NoAffiliation : public Affiliation
     public:
         NoAffiliation() {};
         virtual ~NoAffiliation() {};
+        double calculateDeductions(Paycheck &pc) const override { return 0.0; };
 };
 
 #endif

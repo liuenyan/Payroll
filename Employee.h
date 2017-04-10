@@ -6,6 +6,7 @@
 #include "PaymentSchedule.h"
 #include "PaymentMethod.h"
 #include "Affiliation.h"
+#include "PayCheck.h"
 
 class Employee 
 {
@@ -24,6 +25,8 @@ class Employee
         PaymentSchedule *getSchedule() const { return itsSchedule; };
         PaymentMethod *getMethod() const { return itsMethod; };
         Affiliation *getAffiliation() const { return itsAffiliation; };
+        bool isPayDate(const Date &date) const;
+        void payDay(Paycheck &pc);
     private:
         int itsEmpId;
         std::string itsName;

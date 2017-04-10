@@ -7,6 +7,7 @@ class BiweeklySchedule : public PaymentSchedule
 {
     public:
         virtual ~BiweeklySchedule() {};
+        bool isPayDate(const Date &date) const override;
 };
 
 #endif

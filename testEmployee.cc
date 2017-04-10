@@ -34,6 +34,7 @@
 #include "ChangeMemberTransaction.h"
 #include "ChangeUnaffiliatedTransaction.h"
 #include "NoAffiliation.h"
+#include "PaydayTransaction.h"
 
 using namespace std;
 
@@ -147,6 +148,7 @@ void testAddTimeCard()
     delete add;
     
     Date date(2017, 4, 6);
+    //cout << date << endl;
     TimeCardTransaction *tct = new TimeCardTransaction(date, 4, empId);
     tct->execute();
     delete tct;
@@ -403,6 +405,39 @@ void testChangeAffiliation()
     assert(member == nullptr);
 }
 
+void testPaySingleSarlariedEmployee()
+{
+    cerr <<  "Test pay single salaried employee" << endl;
+    int empId = 15;
+     
+    AddSalariedEmployee a(empId, string("Bob"), string("Home"), 1000.0); 
+    a.execute();
+
+    Date d(2017, 4, 30);
+    PaydayTransaction pt(d);
+    pt.execute();
+    Paycheck *pc = pt.getPaycheck(empId);
+    assert(pc);
+    assert(pc->getField("Disposition") == string("Hold"));
+    assert(pc->getGrossPay() == 1000.0);
+    assert(pc->getDeductions() == 0);
+    assert(pc->getNetPay() == 1000.0);
+}
+
+void testPaySingleSalariedEmployeeOnWrongDate()
+{
+    cerr <<  "Test pay single salaried employee on wrong date" << endl;
+    int empId = 16;
+     
+    AddSalariedEmployee a(empId, string("Bob"), string("Home"), 1000.0); 
+    a.execute();
+    Date d(2017, 4, 29);
+    PaydayTransaction pt(d);
+    pt.execute();
+    Paycheck *pc = pt.getPaycheck(empId);
+    assert(!pc);
+}
+
 int main()
 {
     testAddSalariedEmployee();
@@ -419,5 +454,7 @@ int main()
     testChangeCommissionedTransaction();
     testChangeMethodTransaction();
     testChangeAffiliation();
+    testPaySingleSarlariedEmployee();
+    testPaySingleSalariedEmployeeOnWrongDate();
     return 0;
 }

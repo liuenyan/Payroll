@@ -55,3 +55,21 @@ void Employee::setAffiliation(Affiliation *af)
     delete itsAffiliation;
     itsAffiliation = af;
 }
+
+bool Employee::isPayDate(const Date &date) const
+{
+    return  itsSchedule->isPayDate(date);
+}
+
+void Employee::payDay(Paycheck &pc)
+{
+    double grossPay = itsClassification->calculatePay(pc);
+    double deductions = itsAffiliation->calculateDeductions(pc);
+    double netPay = grossPay - deductions;
+
+    pc.setGrossPay(grossPay);
+    pc.setDeductions(deductions);
+    pc.setNetPay(netPay);
+
+    itsMethod->pay(pc);
+}

@@ -9,6 +9,13 @@ PayrollDatabase::~PayrollDatabase()
 
 }
 
+void PayrollDatabase::getAllEmployeeIds(list<int> &empIds) const
+{
+    for(auto it = itsEmployees.begin(); it!=itsEmployees.end(); ++it) {
+        empIds.push_back(it->first);
+    }
+}
+
 Employee *PayrollDatabase::getEmployee(int empId)
 {
     return itsEmployees[empId];

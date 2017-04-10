@@ -2,6 +2,7 @@
 #define _PAYROLLDATABASE_H_
 
 #include <map>
+#include <list>
 #include "Employee.h"
 
 class PayrollDatabase 
@@ -9,6 +10,7 @@ class PayrollDatabase
     public:
         virtual ~PayrollDatabase();
         Employee *getEmployee(int empId);
+        void getAllEmployeeIds(std::list<int> &empIds) const;
         void addEmployee(int empId, Employee *e);
         void deleteEmployee(int empId);
         Employee *getUnionMember(int memberId);

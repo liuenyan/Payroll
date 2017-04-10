@@ -34,3 +34,8 @@ ServiceCharge *UnionAffiliation::getServiceCharge(Date date)
         return *it;
     return nullptr;
 }
+
+double UnionAffiliation::calculateDeductions(Paycheck &pc) const 
+{
+    return 0;
+}

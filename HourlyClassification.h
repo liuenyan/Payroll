@@ -10,6 +10,7 @@ class HourlyClassification : public PaymentClassification
     public:
         HourlyClassification(double hourlyRate);
         virtual ~HourlyClassification();
+        double calculatePay(Paycheck &pc) const override;
         double getHourlyRate() const { return itsHourlyRate; };
         void addTimeCard(TimeCard *tc);
         TimeCard *getTimeCard(Date date);
