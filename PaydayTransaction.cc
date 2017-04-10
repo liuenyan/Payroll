@@ -1,7 +1,6 @@
 #include <list>
 #include "PaydayTransaction.h"
 #include "PayrollDatabase.h"
-#include "PayCheck.h"
 
 using namespace std;
 
