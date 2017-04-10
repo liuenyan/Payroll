@@ -8,4 +8,4 @@ complier:
 before_install:
     - sudo apt-get update -qq
     - sudo apt-get install -qq libboost-date-time-dev
-script: make && make test
+script: cd src && make && make test
