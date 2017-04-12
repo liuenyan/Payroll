@@ -6,7 +6,7 @@
 class TimeCard 
 {
     public:
-        TimeCard(Date date, double hours);
+        TimeCard(const Date &date, double hours);
         const Date &getDate() const { return itsDate; };
         double getHours() const {return itsHours; };
     private:

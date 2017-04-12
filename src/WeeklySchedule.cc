@@ -2,5 +2,5 @@
 
 bool WeeklySchedule::isPayDate(const Date &date) const
 {
-    return false;
+    return date.day_of_week() == WeekdayEnum::Friday;
 }

@@ -15,6 +15,8 @@ class HourlyClassification : public PaymentClassification
         void addTimeCard(TimeCard *tc);
         TimeCard *getTimeCard(Date date);
     private:
+        bool isInPayPeriod(TimeCard *tc, const Date &period) const;
+        double calculatePayForTimeCard(TimeCard *tc) const;
         double itsHourlyRate;
         std::vector<TimeCard *> itsTimeCards;
 };

@@ -5,70 +5,60 @@ CXXFLAGS = -std=c++11 -g -Wall -Wextra
 RM = rm -r
 #LIBS = -lboost_date_time
 
-ADD_EMPLOYEE_OBJECTS = AddEmployeeTransaction.o AddSalariedEmployee.o \
-    AddHourlyEmployee.o AddCommissionedEmployee.o
+ADD_EMPLOYEE_SRCS = AddEmployeeTransaction.cc AddSalariedEmployee.cc \
+    AddHourlyEmployee.cc AddCommissionedEmployee.cc
 
-DELETE_EMPLOYEE_OBJECTS = DeleteEmployeeTransaction.o
+DELETE_EMPLOYEE_SRCS = DeleteEmployeeTransaction.cc
 
-CHANGE_EMPLOYEE_OBJECTS = ChangeEmployeeTransaction.o ChangeNameTransaction.o \
-    ChangeAddressTransaction.o ChangeClassificationTransaction.o \
-    ChangeHourlyTransaction.o ChangeSalariedTransaction.o \
-    ChangeCommissionedTransaction.o ChangeMethodTransaction.o \
-    ChangeHoldMethodTransaction.o ChangeDirectMethodTransaction.o \
-    ChangeMailMethodTransaction.o ChangeAffiliationTransaction.o \
-    ChangeMemberTransaction.o ChangeUnaffiliatedTransaction.o
+CHANGE_EMPLOYEE_SRCS = ChangeEmployeeTransaction.cc ChangeNameTransaction.cc \
+    ChangeAddressTransaction.cc ChangeClassificationTransaction.cc \
+    ChangeHourlyTransaction.cc ChangeSalariedTransaction.cc \
+    ChangeCommissionedTransaction.cc ChangeMethodTransaction.cc \
+    ChangeHoldMethodTransaction.cc ChangeDirectMethodTransaction.cc \
+    ChangeMailMethodTransaction.cc ChangeAffiliationTransaction.cc \
+    ChangeMemberTransaction.cc ChangeUnaffiliatedTransaction.cc
 
-PAYDAY_OBJECTS = PaydayTransaction.o Paycheck.o
+PAYDAY_SRCS = PaydayTransaction.cc Paycheck.cc
 
-TIMECARD_OBJECTS = TimeCardTransaction.o TimeCard.o
-SALESRECEIPT_OBJECTS = SalesReceiptTransaction.o SalesReceipt.o
-SERVICECHARGE_OBJECTS = ServiceChargeTransaction.o
+TIMECARD_SRCS = TimeCardTransaction.cc TimeCard.cc
+SALESRECEIPT_SRCS = SalesReceiptTransaction.cc SalesReceipt.cc
+SERVICECHARGE_SRCS = ServiceChargeTransaction.cc
 
-CLASSIFICATION_OBJECTS = SalariedClassification.o CommissionedClassification.o \
-    HourlyClassification.o
-SCHEDULE_OBJECTS = WeeklySchedule.o BiweeklySchedule.o MonthlySchedule.o
-AFFILIATION_OBJECTS = UnionAffiliation.o
-METHOD_OBJECTS = HoldMethod.o DirectMethod.o MailMethod.o
+CLASSIFICATION_SRCS = SalariedClassification.cc CommissionedClassification.cc \
+    HourlyClassification.cc
+SCHEDULE_SRCS = WeeklySchedule.cc BiweeklySchedule.cc MonthlySchedule.cc
+AFFILIATION_SRCS = UnionAffiliation.cc
+METHOD_SRCS = HoldMethod.cc DirectMethod.cc MailMethod.cc
 
-
-# testEmployee: testEmployee.o Employee.o PayrollDatabase.o \
-# 	AddEmployeeTransaction.o AddSalariedEmployee.o AddHourlyEmployee.o \
-# 	AddCommissionedEmployee.o DeleteEmployeeTransaction.o \
-# 	TimeCardTransaction.o TimeCard.o Date.o HourlyClassification.o \
-# 	SalesReceiptTransaction.o SalesReceipt.o CommissionedClassification.o \
-# 	UnionAffiliation.o ServiceChargeTransaction.o \
-# 	ChangeEmployeeTransaction.o ChangeNameTransaction.o ChangeAddressTransaction.o \
-# 	ChangeClassificationTransaction.o ChangeHourlyTransaction.o \
-# 	ChangeSalariedTransaction.o ChangeCommissionedTransaction.o \
-# 	ChangeMethodTransaction.o ChangeHoldMethodTransaction.o \
-# 	ChangeDirectMethodTransaction.o ChangeMailMethodTransaction.o \
-# 	ChangeAffiliationTransaction.o ChangeMemberTransaction.o \
-# 	ChangeUnaffiliatedTransaction.o \
-# 	MonthlySchedule.o BiweeklySchedule.o WeeklySchedule.o \
-# 	SalariedClassification.o  \
-# 	PaydayTransaction.o Paycheck.o \
-# 	HoldMethod.o DirectMethod.o MailMethod.o 
-# 	$(CXX) $(CXXFLAGS) -o $@ $^
-
-testEmployee: testEmployee.o Employee.o PayrollDatabase.o \
-	$(ADD_EMPLOYEE_OBJECTS) \
-	$(DELETE_EMPLOYEE_OBJECTS) \
-	$(CHANGE_EMPLOYEE_OBJECTS) \
-	$(PAYDAY_OBJECTS) \
-	$(TIMECARD_OBJECTS) \
-	$(SALESRECEIPT_OBJECTS) \
-	$(SERVICECHARGE_OBJECTS) \
-	$(CLASSIFICATION_OBJECTS) \
-	$(SCHEDULE_OBJECTS) \
-	$(AFFILIATION_OBJECTS) \
-	$(METHOD_OBJECTS)
+sources = testEmployee.cc Employee.cc PayrollDatabase.cc \
+ $(ADD_EMPLOYEE_SRCS) \
+ $(DELETE_EMPLOYEE_SRCS) \
+ $(CHANGE_EMPLOYEE_SRCS) \
+ $(PAYDAY_SRCS) \
+ $(TIMECARD_SRCS) \
+ $(SALESRECEIPT_SRCS) \
+ $(SERVICECHARGE_SRCS) \
+ $(CLASSIFICATION_SRCS) \
+ $(SCHEDULE_SRCS) \
+ $(AFFILIATION_SRCS) \
+ $(METHOD_SRCS)
+	
+testEmployee:$(sources:.cc=.o)
 	$(CXX) $(CXXFLAGS) -o $@ $^
+
+include $(sources:.cc=.d)
+
+%.d:%.cc
+	@set -e; rm -f $@; \
+	$(CXX) -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed -e 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
 
 %.o:%.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	-$(RM) *.o testEmployee 
+	-$(RM) *.o *.d *.stackdump testEmployee 
 
 test:
 	./testEmployee

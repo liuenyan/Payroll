@@ -405,6 +405,17 @@ void testChangeAffiliation()
     assert(member == nullptr);
 }
 
+void validatePaycheck(PaydayTransaction &pt, int empId, double pay, const Date &date)
+{
+    Paycheck *pc = pt.getPaycheck(empId);
+    assert(pc);
+    assert(pc->getPayPeriodEndDate() == date);
+    assert(pc->getField("Disposition") == string("Hold"));
+    assert(pc->getGrossPay() == pay);
+    assert(pc->getDeductions() == 0);
+    assert(pc->getNetPay() == pay);
+}
+
 void testPaySingleSarlariedEmployee()
 {
     cerr <<  "Test pay single salaried employee" << endl;
@@ -416,12 +427,7 @@ void testPaySingleSarlariedEmployee()
     Date d(2017, 4, 30);
     PaydayTransaction pt(d);
     pt.execute();
-    Paycheck *pc = pt.getPaycheck(empId);
-    assert(pc);
-    assert(pc->getField("Disposition") == string("Hold"));
-    assert(pc->getGrossPay() == 1000.0);
-    assert(pc->getDeductions() == 0);
-    assert(pc->getNetPay() == 1000.0);
+    validatePaycheck(pt, empId, 1000.0, d);
 }
 
 void testPaySingleSalariedEmployeeOnWrongDate()
@@ -436,6 +442,111 @@ void testPaySingleSalariedEmployeeOnWrongDate()
     pt.execute();
     Paycheck *pc = pt.getPaycheck(empId);
     assert(!pc);
+}
+
+void testPaySingleHourlyEmployeeNoTimeCards()
+{
+    cerr << "Test pay single hourly employee no timecards" << endl;
+    int empId = 17;
+    AddHourlyEmployee a(empId, string("Bill"), string("Home"), 15.25);
+    a.execute();
+    Date d(2017, 4, 14);
+    PaydayTransaction pt(d);
+    pt.execute();
+    validatePaycheck(pt, empId, 0, d);
+}
+
+void testPaySingleHourlyEmployeeOneTimeCard()
+{
+    cerr << "Test pay single hourly employee one timecard" << endl;
+    int empId = 18;
+    AddHourlyEmployee a(empId, string("Bill"), string("Home"), 15.25);
+    a.execute();
+
+    Date d1(2017, 4, 11);
+    TimeCardTransaction tct(d1, 2, empId);
+    tct.execute();
+
+    Date d(2017, 4, 14);
+    PaydayTransaction pt(d);
+    pt.execute();
+    validatePaycheck(pt, empId, 30.5, d);
+}
+
+void testPaySingleHourlyEmployeeOvertimeOneTimeCard()
+{
+    cerr << "Test pay single hourly employee overtime one timecard" << endl;
+    int empId = 19;
+    AddHourlyEmployee a(empId, string("Bill"), string("Home"), 15.25);
+    a.execute();
+
+    Date d1(2017, 4, 11);
+    TimeCardTransaction tct(d1, 9, empId);
+    tct.execute();
+
+    Date d(2017, 4, 14);
+    PaydayTransaction pt(d);
+    pt.execute();
+    validatePaycheck(pt, empId, 15.25*(8+1.5), d);
+}
+
+void testPaySingleHourlyEmployeeOnWrongDate()
+{
+    cerr <<  "Test pay single hourly employee on wrong date" << endl;
+    int empId = 20;
+     
+    AddHourlyEmployee a(empId, string("Bill"), string("Home"), 15.25); 
+    a.execute();
+
+    Date d1(2017, 4, 11);
+    TimeCardTransaction tct(d1, 9, empId);
+    tct.execute();
+
+    Date d(2017, 4, 12);
+    PaydayTransaction pt(d);
+    pt.execute();
+    Paycheck *pc = pt.getPaycheck(empId);
+    assert(!pc);
+}
+
+void testPaySingleHourlyEmployeeTwoTimeCards()
+{
+    cerr << "Test pay single hourly employee two timecard" << endl;
+    int empId = 21;
+    Date payday(2017, 4, 14);
+    AddHourlyEmployee a(empId, string("Bill"), string("Home"), 15.25);
+    a.execute();
+
+    Date d1(2017, 4, 11);
+    TimeCardTransaction tct(d1, 2, empId);
+    tct.execute();
+
+    TimeCardTransaction tct2(payday, 5, empId);
+    tct2.execute();
+
+    PaydayTransaction pt(payday);
+    pt.execute();
+    validatePaycheck(pt, empId, 15.25*7, payday);
+}
+
+void testPaySingleHourlyEmployeeTwoTimeCardsSpanningTwoPayPeriod()
+{
+    cerr << "Test pay single hourly employee two timecard spanning two pay period" << endl;
+    int empId = 22;
+    Date payday(2017, 4, 14);
+    AddHourlyEmployee a(empId, string("Bill"), string("Home"), 15.25);
+    a.execute();
+
+    Date d1(2017, 4, 7);
+    TimeCardTransaction tct(d1, 2, empId);
+    tct.execute();
+
+    TimeCardTransaction tct2(payday, 5, empId);
+    tct2.execute();
+
+    PaydayTransaction pt(payday);
+    pt.execute();
+    validatePaycheck(pt, empId, 15.25*5, payday);
 }
 
 int main()
@@ -456,5 +567,11 @@ int main()
     testChangeAffiliation();
     testPaySingleSarlariedEmployee();
     testPaySingleSalariedEmployeeOnWrongDate();
+    testPaySingleHourlyEmployeeNoTimeCards();
+    testPaySingleHourlyEmployeeOneTimeCard();
+    testPaySingleHourlyEmployeeOvertimeOneTimeCard();
+    testPaySingleHourlyEmployeeOnWrongDate();
+    testPaySingleHourlyEmployeeTwoTimeCards();
+    testPaySingleHourlyEmployeeTwoTimeCardsSpanningTwoPayPeriod();
     return 0;
 }

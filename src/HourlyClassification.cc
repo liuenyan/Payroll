@@ -34,8 +34,28 @@ TimeCard *HourlyClassification::getTimeCard(Date date)
     return nullptr;
 }
 
-double HourlyClassification::calculatePay(Paycheck &pc) const
+bool HourlyClassification::isInPayPeriod(TimeCard *tc, const Date &period) const
 {
-    return 0.0;
+    Date payPeriodStartDate = period - DateDuration(5);
+    Date payPeriodEndDate = period;
+    return payPeriodStartDate <= tc->getDate() && tc->getDate() <= payPeriodEndDate;
 }
 
+double HourlyClassification::calculatePayForTimeCard(TimeCard *tc) const
+{
+    double hours = tc->getHours();
+    double overtime = max(0.0, hours - 8.0);
+    double straighttime = hours -overtime;
+    return straighttime * itsHourlyRate + overtime * itsHourlyRate * 1.5;
+}
+
+double HourlyClassification::calculatePay(Paycheck &pc) const
+{
+    double grossPay = 0.0;
+    for(auto tc : itsTimeCards) {
+        if(isInPayPeriod(tc, pc.getPayDate())) {
+            grossPay += calculatePayForTimeCard(tc);
+        }
+    }
+    return grossPay;
+}
