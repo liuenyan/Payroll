@@ -1,4 +1,4 @@
-all: testEmployee
+all: PayrollTest
 
 #CXX = g++
 CXXFLAGS = -std=c++11 -g -Wall -Wextra
@@ -30,7 +30,7 @@ SCHEDULE_SRCS = WeeklySchedule.cc BiweeklySchedule.cc MonthlySchedule.cc
 AFFILIATION_SRCS = UnionAffiliation.cc
 METHOD_SRCS = HoldMethod.cc DirectMethod.cc MailMethod.cc
 
-sources = testEmployee.cc Employee.cc PayrollDatabase.cc \
+sources = PayrollTest.cc Employee.cc PayrollDatabase.cc \
  $(ADD_EMPLOYEE_SRCS) \
  $(DELETE_EMPLOYEE_SRCS) \
  $(CHANGE_EMPLOYEE_SRCS) \
@@ -42,9 +42,9 @@ sources = testEmployee.cc Employee.cc PayrollDatabase.cc \
  $(SCHEDULE_SRCS) \
  $(AFFILIATION_SRCS) \
  $(METHOD_SRCS)
-	
-testEmployee:$(sources:.cc=.o)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+
+PayrollTest:$(sources:.cc=.o)
+	$(CXX) $(CXXFLAGS) -o $@ $^ -L../gtest -lgtest -lpthread
 
 include $(sources:.cc=.d)
 
@@ -58,7 +58,7 @@ include $(sources:.cc=.d)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	-$(RM) *.o *.d *.stackdump testEmployee 
+	-$(RM) *.o *.d *.stackdump PayrollTest 
 
 test:
-	./testEmployee
+	./PayrollTest

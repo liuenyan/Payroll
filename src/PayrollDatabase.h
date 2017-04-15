@@ -16,7 +16,7 @@ class PayrollDatabase
         Employee *getUnionMember(int memberId);
         void addUnionMember(int memberId, Employee *e);
         void removeUnionMember(int memberId);
-        void clear(){ itsEmployees.clear(); };
+        void clear();
     private:
         std::map<int, Employee *> itsEmployees;
         std::map<int, Employee *> itsUnionMembers; 

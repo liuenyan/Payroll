@@ -7,5 +7,5 @@ complier:
     - clang
 before_install:
     - sudo apt-get update -qq
-    - sudo apt-get install -qq libboost-date-time-dev
-script: cd src && make && make test
+    - sudo apt-get install -qq cmake libboost-date-time-dev libgtest-dev
+script: mkdir -p gtest && cd gtest && cmake /usr/src/gtest && make && cd ../src && make && make test

@@ -56,3 +56,12 @@ void PayrollDatabase::removeUnionMember(int memberId)
     }
 }
 
+void PayrollDatabase::clear()
+{
+    for(auto it=itsEmployees.begin(); it!= itsEmployees.end(); ++it) {
+        delete it->second;
+    }
+
+    itsEmployees.clear();
+    itsUnionMembers.clear();
+}
