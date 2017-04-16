@@ -34,7 +34,21 @@ SalesReceipt *CommissionedClassification::getSalesReceipt(Date &date)
     return nullptr;
 }
 
+bool CommissionedClassification::isInPayPeriod(SalesReceipt *sr, const Date &period) const
+{
+    Date payEndDate = period;
+    Date payStartDate = period - DateDuration(13);
+    return  payStartDate <= sr->getDate() && sr->getDate() <= payEndDate;
+}
+
 double CommissionedClassification::calculatePay(Paycheck &pc) const
 {
-    return 0.0;
+    double pay = itsSalary;
+    for (auto it = itsSalesReceipts.begin(); it != itsSalesReceipts.end(); ++it)
+    {
+        if(isInPayPeriod(*it, pc.getPayDate())) {
+            pay += itsCommissionRate * (*it)->getAmount();
+        }
+    }
+    return pay;
 }

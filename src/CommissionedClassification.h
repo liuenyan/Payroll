@@ -16,6 +16,7 @@ class CommissionedClassification : public PaymentClassification
         void addSalesReceipt(SalesReceipt *sc);
         SalesReceipt *getSalesReceipt(Date &date);
     private:
+        bool isInPayPeriod(SalesReceipt *sr, const Date &period) const;
         double itsSalary;
         double itsCommissionRate;
         std::vector<SalesReceipt *> itsSalesReceipts;

@@ -2,5 +2,11 @@
 
 bool BiweeklySchedule::isPayDate(const Date &date) const
 {
-    return false;
+    Date first_pay_date(2017, 3, 31);
+    DateDuration duration = date - first_pay_date;
+
+    if ( duration.days() % 14 == 0)
+        return true;
+    else
+        return false;
 }

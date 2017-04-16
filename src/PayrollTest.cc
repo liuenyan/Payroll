@@ -555,6 +555,94 @@ namespace
         pt.execute();
         validatePaycheck(pt, empId, 15.25*5, payday);
     }
+
+    TEST_F(PayrollTest, testPaySingleCommissionedEmployeeNoSaleReceipt) 
+    {
+        int empId = 3;
+        Date payday(2017, 4, 14);
+        
+        AddCommissionedEmployee a(empId, string("Carl"), string("Home"), 800, 40);
+        a.execute();
+
+        PaydayTransaction pt(payday);
+        pt.execute();
+
+        validatePaycheck(pt, empId, 800, payday);
+    }
+
+    TEST_F(PayrollTest, testPaySingleCommissionedEmployeeOneSaleReceipt)
+    {
+        int empId = 3;
+        Date payday(2017, 4, 14);
+        
+        AddCommissionedEmployee a(empId, string("Carl"), string("Home"), 800, 0.2);
+        a.execute();
+
+        SalesReceiptTransaction srt(Date(2017, 4, 13), 100, empId);
+        srt.execute();
+
+        PaydayTransaction pt(payday);
+        pt.execute();
+
+        validatePaycheck(pt, empId, 800+100*0.2, payday);
+    }
+
+    TEST_F(PayrollTest, testPaySingleCommissionedEmployeeOnWrongDate)
+    {
+        int empId = 3;
+        Date payday(2017, 4, 13);
+        
+        AddCommissionedEmployee a(empId, string("Carl"), string("Home"), 800, 0.2);
+        a.execute();
+
+        PaydayTransaction pt(payday);
+        pt.execute();
+
+        Paycheck *pc = pt.getPaycheck(empId);
+        assert(!pc);
+
+    }
+
+    TEST_F(PayrollTest, testPaySingleCommissionedEmployeeTwoSaleReceipt)
+    {
+
+        int empId = 3;
+        Date payday(2017, 4, 14);
+        
+        AddCommissionedEmployee a(empId, string("Carl"), string("Home"), 800, 0.2);
+        a.execute();
+
+        SalesReceiptTransaction srt1(Date(2017, 4, 7), 100, empId);
+        srt1.execute();
+        
+        SalesReceiptTransaction srt2(payday, 150, empId);
+        srt2.execute();
+
+        PaydayTransaction pt(payday);
+        pt.execute();
+
+        validatePaycheck(pt, empId, 800+(100+150)*0.2, payday);
+    }
+
+    TEST_F(PayrollTest, testPaySingleCommissionedEmployeeTwoSaleReceiptSpanningTwoPayPeriod)
+    {
+        int empId = 3;
+        Date payday(2017, 4, 14);
+        
+        AddCommissionedEmployee a(empId, string("Carl"), string("Home"), 800, 0.2);
+        a.execute();
+
+        SalesReceiptTransaction srt1(Date(2017, 3, 31), 100, empId);
+        srt1.execute();
+        
+        SalesReceiptTransaction srt2(payday, 150, empId);
+        srt2.execute();
+
+        PaydayTransaction pt(payday);
+        pt.execute();
+
+        validatePaycheck(pt, empId, 800+150*0.2, payday);
+    }
 };
 
 int main(int argc, char **argv)
