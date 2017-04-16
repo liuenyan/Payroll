@@ -26,6 +26,7 @@ class Employee
         PaymentMethod *getMethod() const { return itsMethod; };
         Affiliation *getAffiliation() const { return itsAffiliation; };
         bool isPayDate(const Date &date) const;
+        Date getPayPeriodStartDate(const Date &payPeriodEndDate) const;
         void payDay(Paycheck &pc);
     private:
         int itsEmpId;

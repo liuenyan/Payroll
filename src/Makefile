@@ -30,7 +30,7 @@ SCHEDULE_SRCS = WeeklySchedule.cc BiweeklySchedule.cc MonthlySchedule.cc
 AFFILIATION_SRCS = UnionAffiliation.cc
 METHOD_SRCS = HoldMethod.cc DirectMethod.cc MailMethod.cc
 
-sources = PayrollTest.cc Employee.cc PayrollDatabase.cc \
+sources = PayrollTest.cc Employee.cc PayrollDatabase.cc Date.cc\
  $(ADD_EMPLOYEE_SRCS) \
  $(DELETE_EMPLOYEE_SRCS) \
  $(CHANGE_EMPLOYEE_SRCS) \

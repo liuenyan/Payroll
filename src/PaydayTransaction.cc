@@ -25,7 +25,7 @@ void PaydayTransaction::execute()
     for(int empId : empIds) {
         Employee *e = gPayrollDatabase.getEmployee(empId);
         if(e && e->isPayDate(itsPayDate)) {
-            Paycheck *pc = new Paycheck(itsPayDate);
+            Paycheck *pc = new Paycheck(e->getPayPeriodStartDate(itsPayDate), itsPayDate);
             itsPaychecks[empId] = pc;
             e->payDay(*pc);
         }

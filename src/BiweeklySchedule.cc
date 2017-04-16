@@ -10,3 +10,9 @@ bool BiweeklySchedule::isPayDate(const Date &date) const
     else
         return false;
 }
+
+
+Date BiweeklySchedule::getPayPeriodStartDate(const Date &payPeriodEndDate) const
+{
+    return Date(payPeriodEndDate - DateDuration(13));
+}

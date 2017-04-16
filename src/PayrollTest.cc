@@ -643,6 +643,153 @@ namespace
 
         validatePaycheck(pt, empId, 800+150*0.2, payday);
     }
+    TEST_F(PayrollTest, testSalariedUnionMemberDues)
+    {
+        int empId = 1;
+        int membetId = 7789;
+        int fridays = 4;
+        AddSalariedEmployee a(empId, string("Bob"), string("Home"), 1000.0);
+        a.execute();
+
+        ChangeMemberTransaction cmt(empId, membetId, 9.42);
+        cmt.execute();
+
+        Date payday(2017, 4, 30);
+        PaydayTransaction pt(payday);
+        pt.execute();
+        
+        Paycheck *pc = pt.getPaycheck(empId);
+        assert(pc);
+        assert(pc->getPayPeriodEndDate() == payday);
+        assert(pc->getField("Disposition") == string("Hold"));
+        assert(pc->getGrossPay() == 1000.0);
+        assert(pc->getDeductions() == 9.42*fridays);
+        assert(pc->getNetPay() == 1000.0-9.42*fridays);
+    }
+    
+    TEST_F(PayrollTest, testHourlyUnionMemberDues)
+    {
+        int empId = 1;
+        int memberId = 7789;
+        int fridays = 1;
+        Date payday(2017, 4, 14);
+
+        AddHourlyEmployee a(empId, string("Bill"), string("Home"), 15.5);
+        a.execute();
+
+        TimeCardTransaction tct(payday, 8, empId);
+        tct.execute();
+
+        ChangeMemberTransaction cmt(empId, memberId, 9.42);
+        cmt.execute();
+        
+        PaydayTransaction pt(payday);
+        pt.execute();
+
+        Paycheck *pc = pt.getPaycheck(empId);
+        assert(pc);
+        assert(pc->getPayPeriodEndDate() == payday);
+        assert(pc->getField("Disposition") == string("Hold"));
+        assert(pc->getGrossPay() == 15.5*8);
+        assert(pc->getDeductions() == 9.42*fridays);
+        assert(pc->getNetPay() == 15.5*8-9.42*fridays);
+    }
+
+    TEST_F(PayrollTest, testCommissionedUnionMemberDues)
+    {
+        int empId = 3;
+        int memberId = 7789;
+        int fridays = 2;
+        Date payday(2017, 4, 14);
+
+        AddCommissionedEmployee a(empId, string("Carl"), string("Home"), 1000, 0.2);
+        a.execute();
+
+        SalesReceiptTransaction srt(payday, 300, empId);
+        srt.execute();
+
+        ChangeMemberTransaction cmt(empId, memberId, 9.42);
+        cmt.execute();
+        
+        PaydayTransaction pt(payday);
+        pt.execute();
+
+        Paycheck *pc = pt.getPaycheck(empId);
+        assert(pc);
+        assert(pc->getPayPeriodEndDate() == payday);
+        assert(pc->getField("Disposition") == string("Hold"));
+        assert(pc->getGrossPay() == 1000+300*0.2);
+        assert(pc->getDeductions() == 9.42*fridays);
+        assert(pc->getNetPay() == 1000+300*0.2-9.42*fridays);
+    }
+
+    TEST_F(PayrollTest, testHourlyUnionMemberServiceCharge)
+    {
+        int empId = 1;
+        int memberId = 7789;
+        int fridays = 1;
+        Date payday(2017, 4, 14);
+
+        AddHourlyEmployee a(empId, string("Bill"), string("Home"), 15.5);
+        a.execute();
+
+        TimeCardTransaction tct(payday, 8, empId);
+        tct.execute();
+
+        ChangeMemberTransaction cmt(empId, memberId, 9.42);
+        cmt.execute();
+
+        ServiceChargeTransaction sct(memberId, payday, 13.5);
+        sct.execute();
+        
+        PaydayTransaction pt(payday);
+        pt.execute();
+
+        Paycheck *pc = pt.getPaycheck(empId);
+        assert(pc);
+        assert(pc->getPayPeriodEndDate() == payday);
+        assert(pc->getField("Disposition") == string("Hold"));
+        assert(pc->getGrossPay() == 15.5*8);
+        assert(pc->getDeductions() == 9.42*fridays + 13.5);
+        assert(pc->getNetPay() == 15.5*8-(9.42*fridays + 13.5));
+    }
+    
+    TEST_F(PayrollTest, testServiceChargesSpanningMultiplePayperiod)
+    {
+        int empId = 1;
+        int memberId = 7789;
+        int fridays = 1;
+        Date payday(2017, 4, 14);
+        Date earlyDay(2017, 4, 7);
+        Date lateDay(2017, 4, 21);
+
+        AddHourlyEmployee a(empId, string("Bill"), string("Home"), 15.5);
+        a.execute();
+
+        TimeCardTransaction tct(payday, 8, empId);
+        tct.execute();
+
+        ChangeMemberTransaction cmt(empId, memberId, 9.42);
+        cmt.execute();
+
+        ServiceChargeTransaction sct(memberId, payday, 13.5);
+        sct.execute();
+        ServiceChargeTransaction sctEarly(memberId,earlyDay, 6.5);
+        sctEarly.execute();
+        ServiceChargeTransaction sctLate(memberId, lateDay, 7.5);
+        sctLate.execute();
+        
+        PaydayTransaction pt(payday);
+        pt.execute();
+
+        Paycheck *pc = pt.getPaycheck(empId);
+        assert(pc);
+        assert(pc->getPayPeriodEndDate() == payday);
+        assert(pc->getField("Disposition") == string("Hold"));
+        assert(pc->getGrossPay() == 15.5*8);
+        assert(pc->getDeductions() == 9.42*fridays + 13.5);
+        assert(pc->getNetPay() == 15.5*8-(9.42*fridays + 13.5));
+    }
 };
 
 int main(int argc, char **argv)

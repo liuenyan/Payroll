@@ -4,6 +4,21 @@
 
 using namespace std;
 
+namespace {
+    int getPayPeriodFridays(const Date &beginDate, const Date &endDate)
+    {
+
+        int fridays = 0;
+
+        for(DayIterator it(beginDate); (*it) <= endDate; ++it) {
+            if(it->day_of_week() == WeekdayEnum::Friday) {
+                fridays++;
+            }
+        }
+        return fridays;
+    }
+}
+
 UnionAffiliation::UnionAffiliation(int memberId, double dues) 
     : itsMemberId(memberId), itsDues(dues) 
 {
@@ -37,5 +52,13 @@ ServiceCharge *UnionAffiliation::getServiceCharge(Date date)
 
 double UnionAffiliation::calculateDeductions(Paycheck &pc) const 
 {
-    return 0;
+    double deductions =  getPayPeriodFridays(pc.getPayPeriodStartDate(), pc.getPayPeriodEndDate()) * itsDues;
+
+    for(auto it = itsServiceCharges.begin(); it!=itsServiceCharges.end(); ++it) {
+        if(isBetween((*it)->getDate(), pc.getPayPeriodStartDate(), pc.getPayPeriodEndDate())) {
+            deductions += (*it)->getAmount(); 
+        }
+    }
+
+    return deductions;
 }

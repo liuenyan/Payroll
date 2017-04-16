@@ -8,6 +8,7 @@ class WeeklySchedule : public PaymentSchedule
     public:
         virtual ~WeeklySchedule() {};
         bool isPayDate(const Date &date) const override;
+        Date getPayPeriodStartDate(const Date &payPeriodEndDate) const override;
 };
 
 #endif

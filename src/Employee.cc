@@ -61,6 +61,11 @@ bool Employee::isPayDate(const Date &date) const
     return  itsSchedule->isPayDate(date);
 }
 
+Date Employee::getPayPeriodStartDate(const Date &payPeriodEndDate) const
+{
+    return itsSchedule->getPayPeriodStartDate(payPeriodEndDate);
+}
+
 void Employee::payDay(Paycheck &pc)
 {
     double grossPay = itsClassification->calculatePay(pc);

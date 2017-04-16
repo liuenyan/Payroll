@@ -13,3 +13,8 @@ bool MonthlySchedule::isPayDate(const Date &date) const
 {
     return isLastDayOfMonth(date);
 }
+
+Date MonthlySchedule::getPayPeriodStartDate(const Date &payPeriodEndDate) const
+{
+    return Date(payPeriodEndDate.year(), payPeriodEndDate.month(), 1);
+}
