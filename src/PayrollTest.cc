@@ -55,160 +55,154 @@ namespace
     void PayrollTest::validatePaycheck(PaydayTransaction &pt, int empId, double pay, const Date &date)
     {
         Paycheck *pc = pt.getPaycheck(empId);
-        assert(pc);
-        assert(pc->getPayPeriodEndDate() == date);
-        assert(pc->getField("Disposition") == string("Hold"));
-        assert(pc->getGrossPay() == pay);
-        assert(pc->getDeductions() == 0);
-        assert(pc->getNetPay() == pay);
+        ASSERT_NE(nullptr, pc);
+        ASSERT_EQ(date, pc->getPayPeriodEndDate());
+        ASSERT_EQ(string("Hold"), pc->getField("Disposition"));
+        ASSERT_DOUBLE_EQ(pay, pc->getGrossPay());
+        ASSERT_DOUBLE_EQ(0, pc->getDeductions());
+        ASSERT_DOUBLE_EQ(pay, pc->getNetPay());
     }
 
     TEST_F(PayrollTest, testAddSalariedEmployee) {
         //cerr << "Test add salaried employee" << endl;
         int empId = 1;
-        Transaction *addSalariedEmployee = new AddSalariedEmployee(
-                empId, string("Alice"), string("Home"), 1000.32); 
-        addSalariedEmployee->execute();
+        AddSalariedEmployee addSalariedEmployee(
+                empId, string("Alice"), string("Home"), 1000.0); 
+        addSalariedEmployee.execute();
 
         Employee *e = gPayrollDatabase.getEmployee(empId);
-        assert(e->getName() == string("Alice"));
-        assert(e->getAddress() == string("Home"));
+        ASSERT_EQ(string("Alice"), e->getName());
+        ASSERT_EQ(string("Home"), e->getAddress());
 
         PaymentClassification *pc = e->getClassification();
         SalariedClassification *sc = dynamic_cast<SalariedClassification *>(pc);
-        assert(sc);
+        ASSERT_NE(nullptr, sc);
 
-        assert(1000.32 == sc->getSalary());
+        ASSERT_DOUBLE_EQ(1000.0, sc->getSalary());
 
         PaymentSchedule *ps = e->getSchedule();
         MonthlySchedule *ms = dynamic_cast<MonthlySchedule *>(ps);
-        assert(ms);
+        ASSERT_NE(nullptr, ms);
 
         PaymentMethod *pm = e->getMethod();
         HoldMethod *hm = dynamic_cast<HoldMethod *>(pm);
-        assert(hm);
+        ASSERT_NE(nullptr, hm);
     }
     TEST_F(PayrollTest, testAddHourlyEmployee) {
 
         //cerr << "Test add hourly employee" << endl;
         int empId = 2;
-        Transaction *addHourlyEmployee = new AddHourlyEmployee(
+        AddHourlyEmployee addHourlyEmployee(
                 empId, string("Bob"), string("Home"), 80.0); 
-        addHourlyEmployee->execute();
+        addHourlyEmployee.execute();
 
         Employee *e = gPayrollDatabase.getEmployee(empId);
-        assert(e->getName() == string("Bob"));
-        assert(e->getAddress() == string("Home"));
+        ASSERT_EQ(string("Bob"), e->getName());
+        ASSERT_EQ(string("Home"), e->getAddress());
 
         PaymentClassification *pc = e->getClassification();
         HourlyClassification *hc = dynamic_cast<HourlyClassification *>(pc);
-        assert(hc);
+        ASSERT_NE(nullptr, hc);
 
-        assert(80.0 == hc->getHourlyRate());
+        ASSERT_DOUBLE_EQ(80.0, hc->getHourlyRate());
 
         PaymentSchedule *ps = e->getSchedule();
         WeeklySchedule *ws = dynamic_cast<WeeklySchedule *>(ps);
-        assert(ws);
+        ASSERT_NE(nullptr, ws);
 
         PaymentMethod *pm = e->getMethod();
         HoldMethod *hm = dynamic_cast<HoldMethod *>(pm);
-        assert(hm);
+        ASSERT_NE(nullptr, hm);
     }
+
     TEST_F(PayrollTest, testAddCommissionedEmployee) {
 
         //cerr << "Test add commissioned employee" << endl;
         int empId = 3;
-        Transaction *addCommissionedEmployee = new AddCommissionedEmployee(
-                empId, string("Carl"), string("Home"), 800.0, 40.0); 
-        addCommissionedEmployee->execute();
+        AddCommissionedEmployee addCommissionedEmployee(
+                empId, string("Carl"), string("Home"), 1000.0, 0.2); 
+        addCommissionedEmployee.execute();
 
         Employee *e = gPayrollDatabase.getEmployee(empId);
-        assert(e->getName() == string("Carl"));
-        assert(e->getAddress() == string("Home"));
+        ASSERT_EQ(string("Carl"), e->getName());
+        ASSERT_EQ(string("Home"), e->getAddress());
 
         PaymentClassification *pc = e->getClassification();
         CommissionedClassification *cc = dynamic_cast<CommissionedClassification *>(pc);
-        assert(cc);
+        ASSERT_NE(nullptr, cc);
 
-        assert(800.0 == cc->getSalary());
-        assert(40.0 == cc->getCommissionRate());
+        ASSERT_DOUBLE_EQ(1000.0, cc->getSalary());
+        ASSERT_DOUBLE_EQ(0.2, cc->getCommissionRate());
 
         PaymentSchedule *ps = e->getSchedule();
         BiweeklySchedule *ws = dynamic_cast<BiweeklySchedule *>(ps);
-        assert(ws);
+        ASSERT_NE(nullptr, ws);
 
         PaymentMethod *pm = e->getMethod();
         HoldMethod *hm = dynamic_cast<HoldMethod *>(pm);
-        assert(hm);
+        ASSERT_NE(nullptr, hm);
     }
     TEST_F(PayrollTest, testDeleteEmployee) {
 
         //cerr << "Test delete employee" << endl;
-        int empId = 4;
-        AddEmployeeTransaction *add = new AddCommissionedEmployee(
-                empId, string("Dell"), string("CA"), 800, 0.2);     
-        add->execute();
+        int empId = 3;
+        AddCommissionedEmployee add(
+                empId, string("Bob"), string("Home"), 800, 0.2);     
+        add.execute();
 
         Employee *e = gPayrollDatabase.getEmployee(empId);
-        assert(e);
+        ASSERT_NE(nullptr, e);
 
         DeleteEmployeeTransaction *del = new DeleteEmployeeTransaction(empId);
         del->execute();
 
         Employee *e1 = gPayrollDatabase.getEmployee(empId);
-        assert(!e1);
+        ASSERT_EQ(nullptr, e1);
     }
     TEST_F(PayrollTest, testAddTimeCard) {
 
         //cerr << "Test AddTimeCard" << endl;
         int empId = 5;
-        AddEmployeeTransaction *add = new AddHourlyEmployee(
-                empId, string("John"), string("CA"), 10.0);
-        add->execute();
-        delete add;
+        AddHourlyEmployee add(empId, string("John"), string("Home"), 10.0);
+        add.execute();
 
         Date date(2017, 4, 6);
-        //cout << date << endl;
-        TimeCardTransaction *tct = new TimeCardTransaction(date, 4, empId);
-        tct->execute();
-        delete tct;
+        TimeCardTransaction tct(date, 4, empId);
+        tct.execute();
 
         Employee *e = gPayrollDatabase.getEmployee(empId); 
-        assert(e);
+        ASSERT_NE(nullptr, e);
 
         PaymentClassification *pc = e->getClassification();
-        assert(pc);
+        ASSERT_NE(nullptr, pc);
         HourlyClassification *hc = dynamic_cast<HourlyClassification *>(pc);
-        assert(hc);
+        ASSERT_NE(nullptr, hc);
 
         TimeCard *tc = hc->getTimeCard(date);
-        assert(tc);
-        assert(tc->getHours() == 4);
+        ASSERT_NE(nullptr, tc);
+        ASSERT_DOUBLE_EQ(4, tc->getHours());
     }
     TEST_F(PayrollTest, testAddSalesReceipt) {
         //cerr << "Test AddSalesReceipt" << endl;
         int empId = 6;
-        AddEmployeeTransaction *add = new AddCommissionedEmployee(
-                empId, string("Jack"), string("CA"), 800.0, 0.2);
-        add->execute();
-        delete add;
+        AddCommissionedEmployee add(empId, string("Jack"), string("CA"), 800.0, 0.2);
+        add.execute();
 
         Date date(2017, 4, 6);
-        SalesReceiptTransaction *srt = new SalesReceiptTransaction(date, 15, empId);
-        srt->execute();
-        delete srt;
+        SalesReceiptTransaction srt(date, 15, empId);
+        srt.execute();
 
         Employee *e = gPayrollDatabase.getEmployee(empId); 
-        assert(e);
+        ASSERT_NE(nullptr, e);
 
         PaymentClassification *pc = e->getClassification();
-        assert(pc);
+        ASSERT_NE(nullptr, pc);
         CommissionedClassification *cc = dynamic_cast<CommissionedClassification *>(pc);
-        assert(cc);
+        ASSERT_NE(nullptr, cc);
 
         SalesReceipt *sr = cc->getSalesReceipt(date);
-        assert(sr);
-        assert(sr->getAmount() == 15);
+        ASSERT_NE(nullptr, sr);
+        ASSERT_DOUBLE_EQ(15, sr->getAmount());
     }
 
     TEST_F(PayrollTest, testAddServiceCharge)
@@ -216,13 +210,11 @@ namespace
         //cerr << "Test AddServiceCharge" << endl;
         int empId = 7;
 
-        AddEmployeeTransaction *add = new AddHourlyEmployee(
-                empId, string("James"), string("CA"), 10.0);
-        add->execute();
-        delete add;
+        AddHourlyEmployee add(empId, string("James"), string("CA"), 10.0);
+        add.execute();
 
         Employee *e = gPayrollDatabase.getEmployee(empId);
-        assert(e);
+        ASSERT_NE(nullptr, e);
 
         int memberId = 87;
         UnionAffiliation *af = new UnionAffiliation(memberId, 12.5);
@@ -231,17 +223,15 @@ namespace
         gPayrollDatabase.addUnionMember(memberId, e);
 
         Date date(2017, 4, 7);
-        ServiceChargeTransaction *sct = 
-            new ServiceChargeTransaction(memberId, date, 12.95);
-        sct->execute();
-        delete sct;
+        ServiceChargeTransaction sct(memberId, date, 12.95);
+        sct.execute();
 
         Employee *e1 = gPayrollDatabase.getUnionMember(memberId);
-        assert(e1 == e);
+        ASSERT_EQ(e1, e);
         ServiceCharge *sc = af->getServiceCharge(date);    
-        assert(sc);
+        ASSERT_NE(nullptr, sc);
 
-        assert(sc->getAmount() == 12.95);
+        ASSERT_DOUBLE_EQ(12.95, sc->getAmount());
     }
 
     TEST_F(PayrollTest, testChangeEmployeeName)
@@ -250,8 +240,7 @@ namespace
         //cerr << "Test change employee name" << endl;
         int empId = 8;
 
-        AddSalariedEmployee a = 
-            AddSalariedEmployee(empId, string("Mark"), string("Home"), 1000.32); 
+        AddSalariedEmployee a(empId, string("Mark"), string("Home"), 1000.32); 
         a.execute();
 
         string name = string("Joe");
@@ -259,7 +248,7 @@ namespace
         cnt.execute();
 
         Employee *e = gPayrollDatabase.getEmployee(empId);
-        assert(e->getName() == name); 
+        ASSERT_EQ(name, e->getName()); 
     }
 
     TEST_F(PayrollTest, testChangeEmployeeAddress)
@@ -276,7 +265,7 @@ namespace
         cat.execute();
 
         Employee *e = gPayrollDatabase.getEmployee(empId);
-        assert(e->getAddress() == address);
+        ASSERT_EQ(address, e->getAddress());
     }
 
     TEST_F(PayrollTest, testChangeHourlyTransaction)
@@ -292,14 +281,14 @@ namespace
 
         Employee *e = gPayrollDatabase.getEmployee(empId);
         PaymentClassification *pc = e->getClassification();
-        assert(pc);
+        ASSERT_NE(nullptr, pc);
         HourlyClassification *hc = dynamic_cast<HourlyClassification *>(pc);
-        assert(hc);
-        assert(hc->getHourlyRate() == 20.0);
+        ASSERT_NE(nullptr, hc);
+        ASSERT_DOUBLE_EQ(20.0, hc->getHourlyRate());
         PaymentSchedule *ps = e->getSchedule();
-        assert(ps);
+        ASSERT_NE(nullptr, ps);
         WeeklySchedule *ws = dynamic_cast<WeeklySchedule *>(ps);
-        assert(ws);
+        ASSERT_NE(nullptr, ws);
     }
 
     TEST_F(PayrollTest, testChangeSalariedTransaction)
@@ -315,14 +304,14 @@ namespace
 
         Employee *e = gPayrollDatabase.getEmployee(empId);
         PaymentClassification *pc = e->getClassification();
-        assert(pc);
+        ASSERT_NE(nullptr, pc);
         SalariedClassification *sc = dynamic_cast<SalariedClassification *>(pc);
-        assert(sc);
-        assert(sc->getSalary() == 1000);
+        ASSERT_NE(nullptr, sc);
+        ASSERT_DOUBLE_EQ(1000, sc->getSalary());
         PaymentSchedule *ps = e->getSchedule();
-        assert(ps);
+        ASSERT_NE(nullptr, ps);
         MonthlySchedule *ms = dynamic_cast<MonthlySchedule *>(ps);
-        assert(ms);
+        ASSERT_NE(nullptr, ms);
     }
 
 
@@ -339,15 +328,15 @@ namespace
 
         Employee *e = gPayrollDatabase.getEmployee(empId);
         PaymentClassification *pc = e->getClassification();
-        assert(pc);
+        ASSERT_NE(nullptr, pc);
         CommissionedClassification *cc = dynamic_cast<CommissionedClassification *>(pc);
-        assert(cc);
-        assert(cc->getSalary() == 1000);
-        assert(cc->getCommissionRate() == 0.2);
+        ASSERT_NE(nullptr, cc);
+        ASSERT_DOUBLE_EQ(1000, cc->getSalary());
+        ASSERT_DOUBLE_EQ(0.2, cc->getCommissionRate());
         PaymentSchedule *ps = e->getSchedule();
-        assert(ps);
+        ASSERT_NE(nullptr, ps);
         BiweeklySchedule *ms = dynamic_cast<BiweeklySchedule *>(ps);
-        assert(ms);
+        ASSERT_NE(nullptr, ms);
     }
 
     TEST_F(PayrollTest, testChangeMethodTransaction)
@@ -362,28 +351,28 @@ namespace
         cdmt.execute();
         Employee *e = gPayrollDatabase.getEmployee(empId);
         PaymentMethod *pm = e->getMethod();
-        assert(pm);
+        ASSERT_NE(nullptr, pm);
         DirectMethod *dm = dynamic_cast<DirectMethod *>(pm);
-        assert(dm);
-        assert(dm->getBank() == string("Bank1"));
-        assert(dm->getAccount() == string("b112233"));
+        ASSERT_NE(nullptr, dm);
+        ASSERT_EQ(string("Bank1"), dm->getBank());
+        ASSERT_EQ(string("b112233"), dm->getAccount()) ;
 
         ChangeMailMethodTransaction cmmt(empId, string("Home1"));
         cmmt.execute();
         e = gPayrollDatabase.getEmployee(empId);
         pm = e->getMethod();
-        assert(pm);
+        ASSERT_NE(nullptr, pm);
         MailMethod *mm = dynamic_cast<MailMethod *>(pm);
-        assert(mm);
-        assert(mm->getAddress() == string("Home1"));
+        ASSERT_NE(nullptr, mm);
+        ASSERT_EQ(string("Home1"), mm->getAddress());
 
         ChangeHoldMethodTransaction chmt(empId);
         chmt.execute();
         e = gPayrollDatabase.getEmployee(empId);
         pm = e->getMethod();
-        assert(pm);
+        ASSERT_NE(nullptr, pm);
         HoldMethod *hm = dynamic_cast<HoldMethod *>(pm);
-        assert(hm);
+        ASSERT_NE(nullptr, hm);
     }
 
     TEST_F(PayrollTest, testChangeAffiliation)
@@ -398,30 +387,29 @@ namespace
         cmt.execute();
 
         Employee *e = gPayrollDatabase.getEmployee(empId);
-        assert(e);
+        ASSERT_NE(nullptr, e);
         Affiliation *af = e->getAffiliation();
-        assert(af);
+        ASSERT_NE(nullptr, af);
         UnionAffiliation *uaf = dynamic_cast<UnionAffiliation *>(af);
-        assert(uaf);
-        assert(uaf->getDues() == 99.42);
+        ASSERT_NE(nullptr, uaf);
+        ASSERT_DOUBLE_EQ(99.42, uaf->getDues());
 
         Employee *member = gPayrollDatabase.getUnionMember(memberId);
-        assert(member == e);
+        ASSERT_EQ(member, e);
 
         ChangeUnaffiliatedTransaction cut(empId);
         cut.execute();
 
         e = gPayrollDatabase.getEmployee(empId);
-        assert(e);
+        ASSERT_NE(nullptr, e);
         af = e->getAffiliation();
-        assert(af);
+        ASSERT_NE(nullptr, af);
         NoAffiliation *naf = dynamic_cast<NoAffiliation *>(af);
-        assert(naf);
+        ASSERT_NE(nullptr, naf);
 
         member = gPayrollDatabase.getUnionMember(memberId);
-        assert(member == nullptr);
+        ASSERT_EQ(nullptr, member);
     }
-
 
     TEST_F(PayrollTest, testPaySingleSarlariedEmployee)
     {
@@ -448,7 +436,7 @@ namespace
         PaydayTransaction pt(d);
         pt.execute();
         Paycheck *pc = pt.getPaycheck(empId);
-        assert(!pc);
+        ASSERT_EQ(nullptr, pc);
     }
 
     TEST_F(PayrollTest, testPaySingleHourlyEmployeeNoTimeCards)
@@ -513,7 +501,7 @@ namespace
         PaydayTransaction pt(d);
         pt.execute();
         Paycheck *pc = pt.getPaycheck(empId);
-        assert(!pc);
+        ASSERT_EQ(nullptr, pc);
     }
 
     TEST_F(PayrollTest, testPaySingleHourlyEmployeeTwoTimeCards)
@@ -599,8 +587,7 @@ namespace
         pt.execute();
 
         Paycheck *pc = pt.getPaycheck(empId);
-        assert(!pc);
-
+        ASSERT_EQ(nullptr, pc);
     }
 
     TEST_F(PayrollTest, testPaySingleCommissionedEmployeeTwoSaleReceipt)
@@ -659,12 +646,12 @@ namespace
         pt.execute();
         
         Paycheck *pc = pt.getPaycheck(empId);
-        assert(pc);
-        assert(pc->getPayPeriodEndDate() == payday);
-        assert(pc->getField("Disposition") == string("Hold"));
-        assert(pc->getGrossPay() == 1000.0);
-        assert(pc->getDeductions() == 9.42*fridays);
-        assert(pc->getNetPay() == 1000.0-9.42*fridays);
+        ASSERT_NE(nullptr, pc);
+        ASSERT_EQ(payday, pc->getPayPeriodEndDate());
+        ASSERT_EQ(string("Hold"), pc->getField("Disposition"));
+        ASSERT_DOUBLE_EQ(1000.0, pc->getGrossPay());
+        ASSERT_DOUBLE_EQ(9.42*fridays, pc->getDeductions());
+        ASSERT_DOUBLE_EQ(1000.0-9.42*fridays, pc->getNetPay());
     }
     
     TEST_F(PayrollTest, testHourlyUnionMemberDues)
@@ -687,12 +674,12 @@ namespace
         pt.execute();
 
         Paycheck *pc = pt.getPaycheck(empId);
-        assert(pc);
-        assert(pc->getPayPeriodEndDate() == payday);
-        assert(pc->getField("Disposition") == string("Hold"));
-        assert(pc->getGrossPay() == 15.5*8);
-        assert(pc->getDeductions() == 9.42*fridays);
-        assert(pc->getNetPay() == 15.5*8-9.42*fridays);
+        ASSERT_NE(nullptr, pc);
+        ASSERT_EQ(payday, pc->getPayPeriodEndDate());
+        ASSERT_EQ(string("Hold"), pc->getField("Disposition"));
+        ASSERT_DOUBLE_EQ(15.5*8, pc->getGrossPay());
+        ASSERT_DOUBLE_EQ(9.42*fridays, pc->getDeductions());
+        ASSERT_DOUBLE_EQ(15.5*8-9.42*fridays, pc->getNetPay());
     }
 
     TEST_F(PayrollTest, testCommissionedUnionMemberDues)
@@ -715,12 +702,12 @@ namespace
         pt.execute();
 
         Paycheck *pc = pt.getPaycheck(empId);
-        assert(pc);
-        assert(pc->getPayPeriodEndDate() == payday);
-        assert(pc->getField("Disposition") == string("Hold"));
-        assert(pc->getGrossPay() == 1000+300*0.2);
-        assert(pc->getDeductions() == 9.42*fridays);
-        assert(pc->getNetPay() == 1000+300*0.2-9.42*fridays);
+        ASSERT_NE(nullptr, pc);
+        ASSERT_EQ(payday, pc->getPayPeriodEndDate());
+        ASSERT_EQ(string("Hold"), pc->getField("Disposition"));
+        ASSERT_DOUBLE_EQ(1000+300*0.2, pc->getGrossPay()) ;
+        ASSERT_DOUBLE_EQ(9.42*fridays, pc->getDeductions());
+        ASSERT_DOUBLE_EQ(1000+300*0.2-9.42*fridays, pc->getNetPay());
     }
 
     TEST_F(PayrollTest, testHourlyUnionMemberServiceCharge)
@@ -746,12 +733,12 @@ namespace
         pt.execute();
 
         Paycheck *pc = pt.getPaycheck(empId);
-        assert(pc);
-        assert(pc->getPayPeriodEndDate() == payday);
-        assert(pc->getField("Disposition") == string("Hold"));
-        assert(pc->getGrossPay() == 15.5*8);
-        assert(pc->getDeductions() == 9.42*fridays + 13.5);
-        assert(pc->getNetPay() == 15.5*8-(9.42*fridays + 13.5));
+        ASSERT_NE(nullptr, pc);
+        ASSERT_EQ(payday, pc->getPayPeriodEndDate());
+        ASSERT_EQ(string("Hold"), pc->getField("Disposition"));
+        ASSERT_DOUBLE_EQ(15.5*8, pc->getGrossPay());
+        ASSERT_DOUBLE_EQ(9.42*fridays + 13.5, pc->getDeductions());
+        ASSERT_DOUBLE_EQ(15.5*8-(9.42*fridays + 13.5), pc->getNetPay());
     }
     
     TEST_F(PayrollTest, testServiceChargesSpanningMultiplePayperiod)
@@ -783,17 +770,18 @@ namespace
         pt.execute();
 
         Paycheck *pc = pt.getPaycheck(empId);
-        assert(pc);
-        assert(pc->getPayPeriodEndDate() == payday);
-        assert(pc->getField("Disposition") == string("Hold"));
-        assert(pc->getGrossPay() == 15.5*8);
-        assert(pc->getDeductions() == 9.42*fridays + 13.5);
-        assert(pc->getNetPay() == 15.5*8-(9.42*fridays + 13.5));
+        ASSERT_NE(nullptr, pc);
+        ASSERT_EQ(payday, pc->getPayPeriodEndDate());
+        ASSERT_EQ(string("Hold"), pc->getField("Disposition"));
+        ASSERT_DOUBLE_EQ(15.5*8, pc->getGrossPay());
+        ASSERT_DOUBLE_EQ(9.42*fridays + 13.5, pc->getDeductions());
+        ASSERT_DOUBLE_EQ(15.5*8-(9.42*fridays + 13.5), pc->getNetPay());
     }
 };
 
 int main(int argc, char **argv)
 {
+
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
