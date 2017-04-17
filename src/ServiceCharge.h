@@ -6,7 +6,7 @@
 class ServiceCharge
 {
     public:
-        ServiceCharge(Date &date, double amount)
+        ServiceCharge(const Date &date, double amount)
             : itsDate(date), itsAmount(amount) {};
         ~ServiceCharge() {};
         const Date &getDate() const { return itsDate; };

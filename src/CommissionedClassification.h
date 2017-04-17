@@ -1,7 +1,7 @@
 #ifndef _COMMISSIONEDCLASSFICATION_H_
 #define _COMMISSIONEDCLASSFICATION_H_
 
-#include <vector>
+#include <map>
 #include "PaymentClassification.h"
 #include "SalesReceipt.h"
 
@@ -18,7 +18,7 @@ class CommissionedClassification : public PaymentClassification
     private:
         double itsSalary;
         double itsCommissionRate;
-        std::vector<SalesReceipt *> itsSalesReceipts;
+        std::map<Date, SalesReceipt *> itsSalesReceipts;
 };
 
 #endif

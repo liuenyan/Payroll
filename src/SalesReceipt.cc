@@ -1,6 +1,6 @@
 #include "SalesReceipt.h"
 
-SalesReceipt::SalesReceipt(Date date, int amount)
+SalesReceipt::SalesReceipt(const Date &date, int amount)
     : itsDate(date), itsAmount(amount)
 {
 

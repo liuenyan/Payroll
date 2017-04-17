@@ -6,7 +6,7 @@
 class SalesReceipt
 {
     public:
-        SalesReceipt(Date date, int amount);
+        SalesReceipt(const Date &date, int amount);
         const Date &getDate() const { return itsDate; };
         int getAmount() const { return itsAmount; };
     private:

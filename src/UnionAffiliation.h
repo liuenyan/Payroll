@@ -1,7 +1,7 @@
 #ifndef _UNIONAFFILIATION_H_
 #define _UNIONAFFILIATION_H_ 
 
-#include <vector>
+#include <map>
 #include "Affiliation.h"
 #include "Date.h"
 #include "ServiceCharge.h"
@@ -19,7 +19,7 @@ class UnionAffiliation : public Affiliation
     private:
         int itsMemberId;
         double itsDues;
-        std::vector<ServiceCharge *> itsServiceCharges;
+        std::map<Date, ServiceCharge *> itsServiceCharges;
 };
 
 #endif

@@ -12,26 +12,20 @@ CommissionedClassification::CommissionedClassification(
 
 CommissionedClassification::~CommissionedClassification() 
 {
-    for(auto salesReceipt : itsSalesReceipts) {
-        delete salesReceipt;
+    for(auto &pair : itsSalesReceipts) {
+        delete pair.second;
     }
 }
 
 
 void CommissionedClassification::addSalesReceipt(SalesReceipt *sc)
 {
-    itsSalesReceipts.push_back(sc);
+    itsSalesReceipts[sc->getDate()] = sc;
 }
 
 SalesReceipt *CommissionedClassification::getSalesReceipt(Date &date)
 {
-    vector<SalesReceipt *>::iterator it = 
-        find_if(itsSalesReceipts.begin(), itsSalesReceipts.end(),
-                [&date] (SalesReceipt *sc) { return sc->getDate() == date; });
-
-    if(it != itsSalesReceipts.end())
-        return *it;
-    return nullptr;
+    return itsSalesReceipts[date];
 }
 
 double CommissionedClassification::calculatePay(Paycheck &pc) const
@@ -39,8 +33,8 @@ double CommissionedClassification::calculatePay(Paycheck &pc) const
     double pay = itsSalary;
     for (auto it = itsSalesReceipts.begin(); it != itsSalesReceipts.end(); ++it)
     {
-        if(isInPayPeriod((*it)->getDate(), pc.getPayPeriodStartDate(), pc.getPayPeriodEndDate())) {
-            pay += itsCommissionRate * (*it)->getAmount();
+        if(isInPayPeriod(it->first, pc.getPayPeriodStartDate(), pc.getPayPeriodEndDate())) {
+            pay += itsCommissionRate * it->second->getAmount();
         }
     }
     return pay;

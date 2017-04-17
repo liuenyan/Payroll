@@ -27,7 +27,7 @@ SERVICECHARGE_SRCS = ServiceChargeTransaction.cc
 CLASSIFICATION_SRCS = SalariedClassification.cc CommissionedClassification.cc \
     HourlyClassification.cc
 SCHEDULE_SRCS = WeeklySchedule.cc BiweeklySchedule.cc MonthlySchedule.cc
-AFFILIATION_SRCS = UnionAffiliation.cc
+AFFILIATION_SRCS = UnionAffiliation.cc NoAffiliation.cc
 METHOD_SRCS = HoldMethod.cc DirectMethod.cc MailMethod.cc
 
 sources = PayrollTest.cc Employee.cc PayrollDatabase.cc Date.cc\

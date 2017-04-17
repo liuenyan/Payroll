@@ -1,7 +1,7 @@
 #ifndef _HOURLYCLASSIFICATION_H_
 #define _HOURLYCLASSIFICATION_H_
 
-#include <vector>
+#include <map>
 #include "PaymentClassification.h"
 #include "TimeCard.h"
 
@@ -17,7 +17,7 @@ class HourlyClassification : public PaymentClassification
     private:
         double calculatePayForTimeCard(TimeCard *tc) const;
         double itsHourlyRate;
-        std::vector<TimeCard *> itsTimeCards;
+        std::map<Date, TimeCard *> itsTimeCards;
 };
 
 #endif

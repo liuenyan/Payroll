@@ -12,26 +12,19 @@ HourlyClassification::HourlyClassification(double hourlyRate)
 
 HourlyClassification::~HourlyClassification()
 {
-    for(auto tc : itsTimeCards) {
-        delete tc;
+    for(auto &pair : itsTimeCards) {
+        delete pair.second;
     }
 }
 
 void HourlyClassification::addTimeCard(TimeCard *tc)
 {
-    itsTimeCards.push_back(tc);
+    itsTimeCards[tc->getDate()] = tc;
 }
 
 TimeCard *HourlyClassification::getTimeCard(Date date)
 {
-    vector<TimeCard *>::iterator it = 
-        find_if(itsTimeCards.begin(),
-                itsTimeCards.end(), 
-                [&date] (TimeCard *tc) ->bool { return tc->getDate() == date; }
-                );
-    if (it != itsTimeCards.end())
-        return *it;
-    return nullptr;
+    return itsTimeCards[date];
 }
 
 double HourlyClassification::calculatePayForTimeCard(TimeCard *tc) const
@@ -45,9 +38,9 @@ double HourlyClassification::calculatePayForTimeCard(TimeCard *tc) const
 double HourlyClassification::calculatePay(Paycheck &pc) const
 {
     double grossPay = 0.0;
-    for(auto tc : itsTimeCards) {
-        if(isInPayPeriod(tc->getDate(), pc.getPayPeriodStartDate(), pc.getPayPeriodEndDate())) {
-            grossPay += calculatePayForTimeCard(tc);
+    for(auto pair : itsTimeCards) {
+        if(isInPayPeriod(pair.first, pc.getPayPeriodStartDate(), pc.getPayPeriodEndDate())) {
+            grossPay += calculatePayForTimeCard(pair.second);
         }
     }
     return grossPay;
